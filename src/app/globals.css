@@ -12,4 +12,6 @@
 @import "../styles/base.css";
 @import "../styles/utilities.css";
 @import "../styles/components.css";
+@import "../styles/pages/puppies.css";
+@import "../styles/pages/gone-home.css";
 @import "../styles/shell.css";
