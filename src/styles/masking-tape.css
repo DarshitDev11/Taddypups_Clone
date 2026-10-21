@@ -9,7 +9,13 @@
   /* Fine horizontal hatching and a soft gloss over the tape colour. */
   background:
     repeating-linear-gradient(0deg, transparent 0 3px, rgb(255 255 255 / 0.14) 3px 5px),
-    linear-gradient(90deg, rgb(255 255 255 / 0.28), transparent 30%, rgb(255 255 255 / 0.18) 70%, transparent),
+    linear-gradient(
+      90deg,
+      rgb(255 255 255 / 0.28),
+      transparent 30%,
+      rgb(255 255 255 / 0.18) 70%,
+      transparent
+    ),
     color-mix(in oklab, var(--tape-colour) 78%, transparent);
   opacity: 0.88;
   /* Torn, slightly uneven ends. */

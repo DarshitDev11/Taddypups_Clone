@@ -13,5 +13,7 @@ type InnerSceneProps = ComponentPropsWithoutRef<"section"> & {
 /** Same `.scene` look as the home sections (ui/Section.tsx), but with colours the inner pages choose. */
 export function InnerScene({ sky, tone = "light", className, style, ...props }: InnerSceneProps) {
   const vars = { "--sky-top": sky[0], "--sky-bottom": sky[1] } as CSSProperties;
-  return <section data-tone={tone} className={cn("scene", className)} style={{ ...vars, ...style }} {...props} />;
+  return (
+    <section data-tone={tone} className={cn("scene", className)} style={{ ...vars, ...style }} {...props} />
+  );
 }

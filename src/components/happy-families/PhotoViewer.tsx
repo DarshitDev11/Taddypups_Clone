@@ -2,9 +2,18 @@
 
 "use client";
 
-import { AnimatePresence, MotionConfig, motion, type PanInfo, type Variants } from "motion/react";
+import { AnimatePresence, MotionConfig, motion, type PanInfo } from "motion/react";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type MouseEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type KeyboardEvent,
+  type MouseEvent,
+} from "react";
+import { SWIPE_THRESHOLD, slideVariants } from "@/components/puppies/slideMotion";
 import type { HappyFamilyPhoto } from "@/types/happyFamily";
 
 interface PhotoViewerProps {
@@ -13,29 +22,6 @@ interface PhotoViewerProps {
   onIndexChange: (index: number) => void;
   onClose: () => void;
 }
-
-/** A horizontal drag further than this many pixels counts as a swipe. */
-const SWIPE_THRESHOLD = 80;
-
-// The photo flies in from the side we are moving towards, tilted and slightly small, and settles with a
-// spring. It leaves quickly the other way. `direction` is +1 for "next" and -1 for "previous".
-const slideVariants: Variants = {
-  enter: (direction: number) => ({ x: direction * 70, rotate: direction * 5, scale: 0.92, opacity: 0 }),
-  center: {
-    x: 0,
-    rotate: 0,
-    scale: 1,
-    opacity: 1,
-    transition: { type: "spring", stiffness: 300, damping: 26 },
-  },
-  exit: (direction: number) => ({
-    x: direction * -70,
-    rotate: direction * -5,
-    scale: 0.92,
-    opacity: 0,
-    transition: { duration: 0.22 },
-  }),
-};
 
 export function PhotoViewer({ photos, index, onIndexChange, onClose }: PhotoViewerProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -100,7 +86,10 @@ export function PhotoViewer({ photos, index, onIndexChange, onClose }: PhotoView
             </button>
           </div>
 
-          <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden" onClick={handleStageClick}>
+          <div
+            className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden"
+            onClick={handleStageClick}
+          >
             <AnimatePresence initial={false} custom={direction} mode="popLayout">
               <motion.div
                 key={index}
@@ -116,7 +105,7 @@ export function PhotoViewer({ photos, index, onIndexChange, onClose }: PhotoView
                 className="photo-viewer__slide"
                 // Fit the photo inside the viewport: as wide as the screen, or as tall as the space left
                 // after the top bar and buttons (about 150px), whichever is smaller.
-                style={{ aspectRatio: `${photo.width} / ${photo.height}`, ["--ar" as string]: photo.width / photo.height }}
+                style={{ "--ar": photo.width / photo.height } as CSSProperties}
               >
                 <Image
                   src={photo.src}
@@ -139,7 +128,11 @@ export function PhotoViewer({ photos, index, onIndexChange, onClose }: PhotoView
             >
               Previous
             </button>
-            <button type="button" onClick={() => go(1)} className="h-12 rounded-full bg-honey px-6 font-semibold text-cocoa">
+            <button
+              type="button"
+              onClick={() => go(1)}
+              className="h-12 rounded-full bg-honey px-6 font-semibold text-cocoa"
+            >
               Next
             </button>
           </div>

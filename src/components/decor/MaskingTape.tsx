@@ -16,6 +16,10 @@ export function MaskingTape({ variant = "center", color, className }: MaskingTap
   // --tape is a custom property, which React's CSSProperties type doesn't know about.
   const style = color ? ({ "--tape": color } as CSSProperties) : undefined;
   return (
-    <span aria-hidden="true" className={cn("masking-tape", `masking-tape--${variant}`, className)} style={style} />
+    <span
+      aria-hidden="true"
+      className={cn("masking-tape", `masking-tape--${variant}`, className)}
+      style={style}
+    />
   );
 }

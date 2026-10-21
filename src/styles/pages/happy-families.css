@@ -1,0 +1,273 @@
+/*
+ * /happy-families: wallpaper background, quote note, polaroid wall and photo viewer.
+ * Components: components/happy-families/*. Reveal states follow the Reveal protocol
+ * ([data-armed]:not([data-revealed]) = waiting, [data-revealed] = entrance plays).
+ */
+
+/* ---------- Page background: striped wallpaper, warm glow at the top, cream gradient ---------- */
+
+.memories {
+  background:
+    repeating-linear-gradient(90deg, transparent 0 46px, rgb(194 98 43 / 0.04) 46px 48px),
+    radial-gradient(70% 40% at 50% 0, rgb(255 214 140 / 0.45), transparent 70%),
+    linear-gradient(#fff3df, #fbe9cc 60%, #f7e0bd);
+}
+
+/* ---------- Heading block ---------- */
+
+.memories__head {
+  display: grid;
+  align-items: end;
+  gap: 2.5rem 4rem;
+}
+
+@media (min-width: 1024px) {
+  .memories__head {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 28rem);
+  }
+}
+
+.memories__title {
+  line-height: 1.06;
+}
+
+.memories__heart {
+  display: inline-block;
+  width: 0.42em;
+  margin-left: 0.25em;
+  color: var(--color-toffee);
+  translate: 0 -0.12em;
+}
+
+/* Ruled note paper with blue lines, tilted a little. */
+.memories__note {
+  position: relative;
+  padding: 1.6rem 1.5rem 1.2rem;
+  border-radius: 0.3rem;
+  rotate: 1.4deg;
+  background:
+    linear-gradient(transparent 1.55rem, rgb(47 110 158 / 0.13) 1.55rem 1.6rem) 0 0.4rem / 100% 1.6rem,
+    #fffdf6;
+  box-shadow: 0 8px 18px -8px rgb(42 23 14 / 0.35);
+}
+
+.memories__note blockquote {
+  font-size: clamp(1.02rem, 1.2vw, 1.15rem);
+  line-height: 1.6rem;
+}
+
+.memories__note figcaption {
+  margin-top: 0.8rem;
+  color: var(--color-toffee-ink);
+}
+
+.memories__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.5rem 1.5rem;
+  margin-top: clamp(2rem, 6vh, 4rem);
+}
+
+/* Heading pieces fade up when they scroll in. (The wall items have their own, bouncier entrance.) */
+.memories [data-reveal]:not(.memory-wall__item) {
+  transition:
+    opacity 0.6s ease,
+    translate 0.7s var(--ease-silk);
+}
+
+.memories [data-reveal][data-armed]:not([data-revealed]):not(.memory-wall__item) {
+  opacity: 0;
+  translate: 0 1rem;
+}
+
+/* ---------- The wall: CSS columns give the masonry layout (items fill column by column) ---------- */
+
+.memory-wall {
+  columns: 2 10.5rem; /* "10.5rem wide" columns: that works out to a single column on a phone */
+  column-gap: clamp(1rem, 3vw, 2.6rem);
+}
+
+@media (min-width: 768px) {
+  .memory-wall {
+    columns: 3;
+  }
+}
+
+@media (min-width: 1280px) {
+  .memory-wall {
+    columns: 4;
+  }
+}
+
+.memory-wall__item {
+  break-inside: avoid; /* a print must never split across two columns */
+  padding: 1.1rem 0.35rem clamp(1.4rem, 3vw, 2.4rem);
+}
+
+.memory-wall__print {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0.3rem;
+  background: none;
+  text-align: inherit;
+}
+
+/* Hover or keyboard focus lifts the print and straightens it. */
+.memory-wall__print:is(:hover, :focus-visible) .memory-print {
+  translate: 0 -6px;
+  rotate: 0deg;
+  box-shadow:
+    0 1px 1px rgb(42 23 14 / 0.12),
+    0 18px 30px -14px rgb(42 23 14 / 0.42);
+}
+
+.memory-wall__print:active .memory-print {
+  translate: 0 -2px;
+}
+
+/* ---------- Polaroid ---------- */
+
+.memory-print {
+  position: relative;
+  display: block;
+  padding: 0.6rem 0.6rem 0;
+  border-radius: 0.2rem;
+  background: var(--color-polaroid);
+  rotate: var(--tilt);
+  box-shadow:
+    0 1px 1px rgb(42 23 14 / 0.12),
+    0 10px 20px -8px rgb(42 23 14 / 0.36);
+  transition:
+    rotate 0.5s var(--ease-pounce),
+    translate 0.5s var(--ease-pounce),
+    box-shadow 0.4s var(--ease-silk);
+}
+
+.memory-print__photo {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 1px;
+  background: #e8dfd3;
+  box-shadow: inset 0 0 0 1px rgb(42 23 14 / 0.08);
+}
+
+.memory-print__photo img {
+  display: block;
+}
+
+.memory-print__caption {
+  display: block;
+  min-height: 2.6rem;
+  padding: 0.55rem 0.2rem 0.6rem;
+  color: var(--color-cocoa-soft);
+  font-size: 0.92rem;
+  line-height: 1.2;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Entrance: the print drops, squashes and settles; tape pops on; a paw pats it down ---------- */
+
+.memory-wall__item[data-armed]:not([data-revealed]) .memory-print {
+  opacity: 0;
+}
+
+.memory-wall__item[data-armed][data-revealed] .memory-print {
+  animation: print-bounce 0.62s var(--d) backwards;
+}
+
+@keyframes print-bounce {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.2, 0.7, 0.3, 1);
+    translate: 0 1.6rem;
+    scale: 0.9;
+  }
+  42% {
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.5, 0, 0.7, 0.4);
+    translate: 0 -0.4rem;
+    scale: 0.98 1.03;
+  }
+  68% {
+    animation-timing-function: cubic-bezier(0.3, 0, 0.3, 1);
+    translate: 0;
+    scale: 1.03 0.97;
+  }
+  100% {
+    opacity: 1;
+    translate: 0;
+    scale: 1;
+  }
+}
+
+.memory-wall__item[data-armed]:not([data-revealed]) .masking-tape {
+  opacity: 0;
+  scale: 1.25 0.6;
+}
+
+.memory-wall__item .masking-tape {
+  transition:
+    scale 0.35s var(--ease-pounce) calc(var(--d) + 0.42s),
+    opacity 0.2s calc(var(--d) + 0.42s);
+}
+
+.memory-wall__paw {
+  position: absolute;
+  top: -1.25rem;
+  left: 50%;
+  z-index: 3;
+  width: clamp(1.8rem, 24%, 2.6rem);
+  color: var(--color-toffee);
+  opacity: 0;
+  translate: -50%;
+  pointer-events: none;
+}
+
+.memory-wall__item[data-armed][data-revealed] .memory-wall__paw {
+  animation: paw-pat 0.7s calc(var(--d) + 0.2s) both;
+}
+
+@keyframes paw-pat {
+  0% {
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.7, 0.6);
+    transform: translateY(-1.2rem) rotate(-16deg) scale(1.15);
+  }
+  32% {
+    opacity: 0.92;
+    animation-timing-function: cubic-bezier(0.3, 0, 0.3, 1);
+    transform: translateY(0.12rem) rotate(-6deg) scale(1.06, 0.88);
+  }
+  52% {
+    opacity: 0.92;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.8, 0.6);
+    transform: translateY(0) rotate(-6deg) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-1rem) rotate(6deg) scale(1.04);
+  }
+}
+
+/* ---------- Photo viewer ---------- */
+
+/* Lock the page behind the open viewer. scrollbar-gutter (base.css) stops the layout from jumping. */
+html:has(.photo-viewer[open]) {
+  overflow: hidden;
+}
+
+/* Fit the photo inside the screen: full width, or as tall as the space left under the bars (~150px). */
+.photo-viewer__slide {
+  position: relative;
+  width: min(100vw, calc((100dvh - 150px) * var(--ar)));
+  aspect-ratio: var(--ar);
+  cursor: grab;
+  touch-action: pan-y;
+}
