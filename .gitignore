@@ -34,3 +34,9 @@ yarn-debug.log*
 # Local agent worktrees
 /.claude/worktrees/
 /research/compare/
+
+# Only the app's code is pushed: no notes/docs (*.md), research material or agent files
+*.md
+/docs/
+/research/
+/.claude/
