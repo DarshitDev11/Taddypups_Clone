@@ -1,0 +1,372 @@
+/*
+ * /contact: the letter form, its "post it" animation, and the shopfront visit card.
+ * Components: components/forms/ContactLetterForm.tsx, components/contact/*.
+ * The wrapper's data-phase (writing > sealing > posting > sent) drives the animation.
+ */
+
+/* ---------- Letter ---------- */
+
+.post {
+  position: relative;
+}
+
+/* While the letter folds and the envelope drops, nothing may spill outside the card. */
+.post[data-phase="sealing"],
+.post[data-phase="posting"] {
+  overflow: clip;
+}
+
+.letterform {
+  --pad: clamp(1.5rem, 4vw, 2.75rem);
+  position: relative;
+  padding: var(--pad);
+  border: 3px solid var(--color-cocoa);
+  border-radius: 1.6rem;
+  /* A thin red margin line down the left, like writing paper. */
+  background:
+    linear-gradient(
+      90deg,
+      transparent 0 calc(var(--pad) - 0.9rem),
+      rgb(194 98 43 / 0.28) calc(var(--pad) - 0.9rem) calc(var(--pad) - 0.75rem),
+      transparent 0
+    ),
+    var(--color-milk);
+  color: var(--color-cocoa);
+  box-shadow: 8px 10px rgb(42 23 14 / 0.16);
+  transform-origin: 50% 0;
+}
+
+/* Paw stamp in the top-right corner. */
+.letter__stamp {
+  position: absolute;
+  top: -1.25rem;
+  right: 2rem;
+  display: grid;
+  place-items: center;
+  width: 4.75rem;
+  aspect-ratio: 1;
+  border: 3px dashed var(--color-toffee-deep);
+  border-radius: 0.5rem;
+  background: var(--color-honey-soft);
+  color: var(--color-toffee-deep);
+  rotate: 6deg;
+}
+
+.letterform__greeting {
+  color: var(--color-toffee-ink);
+  font-size: clamp(1.4rem, 2.4vw, 1.75rem);
+}
+
+/* A tall line-height leaves room for the underlined blanks to sit between the words. */
+.letterform__line {
+  margin-top: 0.9rem;
+  font-size: clamp(1.05rem, 1.5vw, 1.2rem);
+  line-height: 2.55;
+}
+
+/* ---------- Blanks ---------- */
+
+.blank {
+  display: inline-block;
+  width: min(var(--size), 100%);
+  vertical-align: baseline;
+}
+
+.blank :is(input, select) {
+  width: 100%;
+  height: 2.2rem;
+  padding: 0 0.25rem;
+  border: 0;
+  border-bottom: 2.5px dashed rgb(42 23 14 / 0.45);
+  border-radius: 0.3rem 0.3rem 0 0;
+  outline: none;
+  background: transparent;
+  color: var(--color-toffee-ink);
+  font-family: var(--font-hand);
+  font-size: 1.12rem;
+  transition:
+    background-color 0.25s,
+    border-color 0.25s;
+}
+
+.blank :is(input, select)::placeholder {
+  color: rgb(90 58 40 / 0.5);
+}
+
+/* Focus: the dashed underline turns solid and the blank gets a honey tint. */
+.blank :is(input, select):focus-visible {
+  border-bottom-style: solid;
+  border-bottom-color: var(--color-toffee-deep);
+  background-color: rgb(251 227 180 / 0.6);
+}
+
+.blank :is(input, select)[aria-invalid="true"] {
+  border-bottom: 2.5px solid var(--color-error);
+  background-color: rgb(249 205 191 / 0.45);
+}
+
+.blank--select {
+  width: min(20ch, 100%);
+}
+
+/* The select's arrow is two little triangles drawn with gradients. */
+.blank select {
+  padding-right: 1.4rem;
+  appearance: none;
+  text-overflow: ellipsis;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--color-toffee-deep) 50%) right 0.55rem center / 0.45rem
+      0.45rem no-repeat,
+    linear-gradient(-45deg, transparent 50%, var(--color-toffee-deep) 50%) right 0.2rem center / 0.45rem
+      0.45rem no-repeat;
+}
+
+/* ---------- Ruled note area ---------- */
+
+.letterform__note {
+  display: block;
+  width: 100%;
+  margin-top: 1.1rem;
+  padding: 0 0.25rem;
+  border: 0;
+  outline: none;
+  background: repeating-linear-gradient(
+      transparent 0 calc(2.3rem - 2px),
+      rgb(42 23 14 / 0.16) calc(2.3rem - 2px) 2.3rem
+    )
+    local;
+  color: var(--color-toffee-ink);
+  font-family: var(--font-hand);
+  font-size: 1.1rem;
+  line-height: 2.3rem;
+  resize: vertical;
+}
+
+.letterform__note:focus-visible {
+  border-radius: 0.4rem;
+  background-color: rgb(251 227 180 / 0.35);
+}
+
+.letterform__alert {
+  margin-top: 1rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 1rem;
+  background: var(--color-blush);
+}
+
+.letterform__alert ul {
+  margin-top: 0.35rem;
+  padding-left: 1.1rem;
+  font-size: 0.95rem;
+  list-style: outside;
+}
+
+.letterform__sign {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  margin-top: 1.6rem;
+}
+
+.letterform__sign p {
+  color: var(--color-cocoa-soft);
+  font-size: 1.1rem;
+}
+
+/* ---------- Post it: fold, envelope, mailbox ---------- */
+
+.post[data-phase="sealing"] .letterform,
+.post[data-phase="posting"] .letterform {
+  animation: letter-fold 0.65s var(--ease-snap) forwards;
+}
+
+@keyframes letter-fold {
+  55% {
+    opacity: 0.7;
+    transform: perspective(1100px) rotateX(62deg) scale(0.8);
+  }
+  100% {
+    opacity: 0;
+    transform: perspective(1100px) rotateX(80deg) scale(0.35) translateY(30%);
+  }
+}
+
+.post__scene {
+  position: absolute;
+  bottom: 0.5rem;
+  left: 50%;
+  width: 14rem;
+  height: 26rem;
+  translate: -50%;
+  pointer-events: none;
+}
+
+.post__envelope {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 1;
+  width: 11rem;
+  translate: -50%;
+  animation: env-in 0.45s 0.3s var(--ease-pounce) both;
+}
+
+@keyframes env-in {
+  0% {
+    opacity: 0;
+    scale: 0.4;
+  }
+}
+
+/* The flap starts open (flipped up) and snaps shut. */
+.post__flap {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: flap-close 0.3s 0.55s ease-in both;
+}
+
+@keyframes flap-close {
+  0% {
+    transform: scaleY(-1);
+  }
+}
+
+/* Posting: the envelope lifts a touch, then drops into the slot while the mailbox rises. */
+.post[data-phase="posting"] .post__envelope {
+  animation: env-post 0.85s var(--ease-snap) forwards;
+}
+
+@keyframes env-post {
+  0% {
+    translate: -50%;
+    scale: 1;
+  }
+  35% {
+    translate: -50% -1.2rem;
+    scale: 0.92;
+  }
+  100% {
+    translate: -50% 12.5rem;
+    scale: 0.55;
+  }
+}
+
+.post__box {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  z-index: 2;
+  width: 13rem;
+  translate: -50% 120%;
+}
+
+.post[data-phase="posting"] .post__box {
+  animation: box-up 0.5s var(--ease-pounce) forwards;
+}
+
+@keyframes box-up {
+  to {
+    translate: -50%;
+  }
+}
+
+/* The flag starts folded down and flips up after the letter has gone in. */
+.post__flag {
+  transform-box: fill-box;
+  transform-origin: 0 100%;
+  rotate: 90deg;
+}
+
+.post[data-phase="posting"] .post__flag {
+  animation: flag-up 0.4s 0.75s var(--ease-pounce) forwards;
+}
+
+.post__flag--up {
+  rotate: 0deg;
+}
+
+@keyframes flag-up {
+  to {
+    rotate: 0deg;
+  }
+}
+
+/* ---------- Thank-you card ---------- */
+
+.post__sent {
+  padding: clamp(2rem, 5vw, 3rem) 1.5rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 1.6rem;
+  outline: none;
+  background: var(--color-honey);
+  color: var(--color-cocoa);
+  text-align: center;
+  animation: sent-in 0.55s var(--ease-pounce) both;
+}
+
+.post__box--sent {
+  display: block;
+  width: 9rem;
+  margin-inline: auto;
+}
+
+@keyframes sent-in {
+  0% {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.96);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post *,
+  .post__sent {
+    animation: none !important;
+  }
+}
+
+/* ---------- Visit card (the shopfront) ---------- */
+
+.shopfront {
+  position: relative;
+  overflow: hidden;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 1.2rem;
+  background: linear-gradient(#fff1d8, #fbe3b4);
+  color: var(--color-cocoa);
+}
+
+/* Striped awning along the top. */
+.shopfront::before {
+  content: "";
+  display: block;
+  height: 1.9rem;
+  border-bottom: 3px solid var(--color-cocoa);
+  background: repeating-linear-gradient(90deg, var(--color-toffee) 0 1.4rem, var(--color-milk) 1.4rem 2.8rem);
+}
+
+.visit {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.visit__photo {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 999px 999px 1rem 1rem;
+  background: var(--color-honey-soft);
+}
+
+@media (min-width: 640px) {
+  .visit {
+    grid-template-columns: minmax(0, 1fr) 11rem;
+    align-items: end;
+  }
+
+  .visit__photo {
+    aspect-ratio: 3 / 4;
+  }
+}
