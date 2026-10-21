@@ -33,3 +33,4 @@ yarn-debug.log*
 
 # Local agent worktrees
 /.claude/worktrees/
+/research/compare/
