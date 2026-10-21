@@ -37,6 +37,7 @@ yarn-debug.log*
 
 # Only the app's code is pushed: no notes/docs (*.md), research material or agent files
 *.md
+!/README.md
 /docs/
 /research/
 /.claude/
