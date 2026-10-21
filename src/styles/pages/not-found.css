@@ -1,0 +1,104 @@
+/* 404 page: the "LOST" poster with tear-off tabs (components/not-found/LostPoster.tsx). */
+
+.poster {
+  position: relative;
+  width: min(100%, 34rem);
+  padding: clamp(1.6rem, 5vw, 2.6rem) clamp(1.2rem, 4.5vw, 2.4rem) 0;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 0.6rem;
+  background: radial-gradient(at 20% 10%, rgb(255 255 255 / 0.6), transparent 60%), #fff6df;
+  color: var(--color-cocoa);
+  text-align: center;
+  rotate: -1.2deg;
+  box-shadow: 8px 12px rgb(42 23 14 / 0.16);
+  /* The poster is pinned up with a bounce when the page opens. */
+  animation: poster-in 0.9s var(--ease-pounce) both;
+}
+
+@keyframes poster-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-1.5rem) rotate(3deg);
+  }
+}
+
+.poster__kicker {
+  color: var(--color-toffee-ink);
+  font-size: clamp(1.1rem, 2.4vw, 1.35rem);
+}
+
+.poster__title {
+  margin-top: 0.2rem;
+  font-size: clamp(4rem, 15vw, 7.5rem);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* A dashed frame, like a photo taped to the poster. */
+.poster__photo {
+  width: min(70%, 17rem);
+  margin: 0.6rem auto 0;
+  padding: 0.6rem 0.6rem 0.2rem;
+  border: 3px dashed rgb(42 23 14 / 0.4);
+  border-radius: 0.5rem;
+  background: var(--color-milk);
+}
+
+.poster__desc {
+  max-width: 34ch;
+  margin: 1.2rem auto 0;
+  color: var(--color-cocoa-soft);
+}
+
+.poster__reward {
+  margin-top: 1.1rem;
+  color: var(--color-toffee-ink);
+}
+
+/* Tear-off tabs: five strips cut with dashed lines, text running down. */
+.poster__tabs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0.8rem calc(-1 * clamp(1.2rem, 4.5vw, 2.4rem)) 0;
+  border-top: 2.5px dashed rgb(42 23 14 / 0.5);
+}
+
+.poster__tabs li + li {
+  border-left: 2.5px dashed rgb(42 23 14 / 0.5);
+}
+
+.poster__tab {
+  display: grid;
+  place-items: center;
+  height: 8.5rem;
+  padding: 0.6rem 0.2rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-decoration: none;
+  writing-mode: vertical-rl;
+  transform-origin: 50% 0; /* the tab swings from its top edge, like a tear-off strip */
+  transition:
+    rotate 0.45s var(--ease-pounce),
+    background-color 0.25s ease;
+}
+
+.poster__tab:hover,
+.poster__tab:focus-visible {
+  background: var(--color-honey-soft);
+  rotate: 8deg;
+}
+
+.poster li:nth-child(2n) .poster__tab:hover,
+.poster li:nth-child(2n) .poster__tab:focus-visible {
+  rotate: -8deg;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poster {
+    animation: none;
+  }
+
+  .poster__tab {
+    transition: none;
+  }
+}
