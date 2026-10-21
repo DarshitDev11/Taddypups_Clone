@@ -30,3 +30,6 @@ yarn-debug.log*
 /research/raw/
 /research/assets/
 /research/scripts/node_modules/
+
+# Local agent worktrees
+/.claude/worktrees/
