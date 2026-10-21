@@ -1,8 +1,12 @@
 # Netlify settings live here so the dashboard's blank build fields don't matter.
-# Netlify's Next.js runtime serves the site; the publish directory must be .next, not a static folder.
+# The Next.js plugin turns the .next build into routes and functions; without it Netlify serves the raw
+# .next folder as static files and every page is a 404.
 [build]
   command = "npm run build"
   publish = ".next"
 
 [build.environment]
   NODE_VERSION = "22"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
