@@ -49,7 +49,7 @@ Research captures (screenshots, raw computed styles, decoded markup, assets) are
 - [x] C5. _`SmoothScroll.tsx` handles same-page hash clicks._ Lenis doesn't smooth-scroll same-page hash links (native jump instead).
 
 ### D. Polish / housekeeping
-- [ ] D1. **Footer social links** (`src/data/siteConfig.ts` → `socials`) still point to the real business's Instagram/TikTok/Facebook. **Ask the user** before changing them (suggested: `#`).
+- [x] D1. **Footer social links** (`src/data/siteConfig.ts` → `socials`) still point to the real business's Instagram/TikTok/Facebook. **Ask the user** before changing them (suggested: `#`).
 - [~] D2. Compress media (JPEGs re-encoded in place with the same pixel size: `public/` 67 MB → 57 MB; **videos still uncompressed, no ffmpeg on this machine**): `public/` is ~67 MB (36 MB family JPEGs, 12 MB puppy photos, 20 MB videos). Convert JPEGs to WebP/AVIF or resize; compress `public/videos/maltipoo-female-2-06.mp4` and `-07.mp4` first.
 - [ ] D3. Lighthouse pass (performance, accessibility, SEO ≥ 90) and a real-phone test (touch swipe on galleries is untested).
 - [ ] D4. Update `PROCESS.md` (Steps 6–7, prompts, challenges) and record the Loom (outline in `PLAN.md` §6).

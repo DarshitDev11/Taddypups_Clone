@@ -23,10 +23,11 @@ export const siteConfig = {
     mapsUrl: "https://www.google.com/maps/search/?api=1&query=Downtown+Dubai",
   },
 
+  /** PLACEHOLDER links: the demo clone must not point at the real business's accounts. */
   socials: [
-    { label: "Instagram", href: "https://www.instagram.com/teddypups.worldwide/" },
-    { label: "TikTok", href: "https://www.tiktok.com/@teddypupsuae" },
-    { label: "Facebook", href: "https://www.facebook.com/profile.php?id=61567496944539" },
+    { label: "Instagram", href: "#" },
+    { label: "TikTok", href: "#" },
+    { label: "Facebook", href: "#" },
   ],
 
   /** Header and mobile-menu links. */
