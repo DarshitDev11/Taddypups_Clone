@@ -1,0 +1,203 @@
+/*
+ * Route curtain (page transition). Behaviour lives in components/layout/PageTransition.tsx;
+ * values come from research/DESIGN-SPEC.md section 2.9.
+ */
+
+.tp-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 95;
+  overflow: clip;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.tp-curtain:not([data-state="idle"]) {
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Hidden at rest, below the screen, ready to slide up. */
+.tp-curtain__blanket {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 0.5rem;
+  translate: 0 calc(100% + 44px);
+  background:
+    repeating-linear-gradient(45deg, transparent 0 46px, rgb(42 23 14 / 0.07) 46px 48px),
+    repeating-linear-gradient(-45deg, transparent 0 46px, rgb(42 23 14 / 0.07) 46px 48px),
+    radial-gradient(circle at 50% 46%, var(--color-milk) 0, transparent 60%),
+    var(--color-honey-soft);
+}
+
+/* Scalloped top and bottom edges: one 76x40 scallop tile with a dashed stitch line. */
+.tp-curtain__blanket::before,
+.tp-curtain__blanket::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  height: 40px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='76' height='40'%3E%3Cpath d='M0 40V27A38 25 0 0 1 76 27V40Z' fill='%23fbe3b4' stroke='%232a170e' stroke-width='3'/%3E%3Cpath d='M11 33A27 19 0 0 1 65 33' fill='none' stroke='%232a170e' stroke-width='1.6' stroke-dasharray='3.5 5.5' opacity='.42'/%3E%3C/svg%3E")
+    repeat-x;
+}
+.tp-curtain__blanket::before {
+  top: -39px;
+}
+.tp-curtain__blanket::after {
+  bottom: -39px;
+  scale: 1 -1;
+}
+
+/* intro: already covering, lifts after .56s. */
+.tp-curtain[data-state="intro"] .tp-curtain__blanket {
+  translate: 0 0;
+  animation: tp-curtain-lift 0.48s cubic-bezier(0.65, 0, 0.3, 1) 0.56s forwards;
+}
+.tp-curtain[data-state="covering"] .tp-curtain__blanket {
+  animation: tp-curtain-cover 0.3s var(--ease-silk) forwards;
+}
+.tp-curtain[data-state="covered"] .tp-curtain__blanket {
+  translate: 0 0;
+}
+.tp-curtain[data-state="lifting"] .tp-curtain__blanket {
+  translate: 0 0;
+  animation: tp-curtain-lift 0.46s cubic-bezier(0.65, 0, 0.3, 1) forwards;
+}
+
+@keyframes tp-curtain-cover {
+  from {
+    translate: 0 calc(100% + 44px);
+  }
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes tp-curtain-lift {
+  to {
+    translate: 0 calc(-100% - 44px);
+  }
+}
+
+/* Stage: the puppy runs left to right, leaving paw prints. */
+.tp-curtain__stage {
+  position: relative;
+  width: min(44rem, 86vw);
+  height: clamp(9rem, 24vw, 12rem);
+}
+
+.tp-curtain__runner {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: clamp(6.5rem, 15vw, 9rem);
+}
+.tp-curtain__runner svg {
+  width: 100%;
+  height: auto;
+}
+.tp-curtain:not([data-state="idle"]) .tp-curtain__runner {
+  animation: tp-runner-travel 1.15s cubic-bezier(0.32, 0.1, 0.4, 1) both;
+}
+
+@keyframes tp-runner-travel {
+  from {
+    translate: -40% 0;
+  }
+  to {
+    translate: calc(min(44rem, 86vw) / 1.5625) 0;
+  }
+}
+
+/* Running cycle on the inlined SVG parts. */
+.tp-runner__leg {
+  animation: tp-runner-leg 0.32s ease-in-out infinite alternate;
+}
+.tp-runner__leg--bn,
+.tp-runner__leg--fn {
+  animation-direction: alternate-reverse;
+}
+.tp-runner__body {
+  animation: tp-runner-bob 0.16s ease-in-out infinite alternate;
+}
+.tp-runner__ear {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: tp-runner-ear 0.16s ease-in-out infinite alternate;
+}
+
+@keyframes tp-runner-leg {
+  from {
+    rotate: -23deg;
+  }
+  to {
+    rotate: 23deg;
+  }
+}
+@keyframes tp-runner-bob {
+  to {
+    translate: 0 -6px;
+  }
+}
+@keyframes tp-runner-ear {
+  to {
+    rotate: 8deg;
+  }
+}
+
+/* Five toffee paw prints that pop in behind the runner. */
+.tp-curtain__print {
+  position: absolute;
+  bottom: 0.25rem;
+  left: calc(18% + var(--i) * 9%);
+  width: 1.1rem;
+  height: 1.1rem;
+  opacity: 0;
+  rotate: 10deg;
+  background: var(--color-toffee);
+  mask: url("/svg/paw-cursor.svg") center / contain no-repeat;
+}
+.tp-curtain__print:nth-child(odd) {
+  translate: 0 -10px;
+}
+.tp-curtain:not([data-state="idle"]) .tp-curtain__print {
+  animation: tp-print-pop 1s ease-out calc(0.16s + var(--i) * 0.12s) both;
+}
+
+@keyframes tp-print-pop {
+  0% {
+    scale: 0.4;
+    opacity: 0.7;
+  }
+  40% {
+    scale: 1.08;
+    opacity: 0.7;
+  }
+  60% {
+    scale: 1;
+  }
+  100% {
+    scale: 1;
+    opacity: 0;
+  }
+}
+
+.tp-curtain__caption {
+  font-family: var(--font-shantell), cursive;
+  font-variation-settings: "INFM" 60, "BNCE" 30;
+  font-size: clamp(1.05rem, 2.4vw, 1.45rem);
+  color: var(--color-toffee-ink);
+}
+
+/* Freeze page scroll while the curtain is down. */
+html.tp-hold-still {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tp-curtain {
+    display: none;
+  }
+}

@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Throw-away research scripts, not part of the app.
     "research/**",
+    // Local agent worktrees (separate checkouts of this repo).
+    ".claude/**",
   ]),
 ]);
 

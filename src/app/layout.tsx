@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { figtree, fraunces, shantellSans } from "@/app/fonts";
 import { MobileActionBar } from "@/components/layout/MobileActionBar";
+import { CurtainRunner } from "@/components/layout/CurtainRunner";
 import { PageTransition } from "@/components/layout/PageTransition";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
@@ -40,7 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${figtree.variable} ${fraunces.variable} ${shantellSans.variable}`}>
       <body>
         <SkipLink />
-        <PageTransition />
+        <PageTransition runner={<CurtainRunner />} />
         <SmoothScroll />
         <SiteHeader />
         {/* Padding clears the fixed header; tabIndex lets the skip link move focus here. */}
