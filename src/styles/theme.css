@@ -1,0 +1,51 @@
+/*
+ * Design tokens (Tailwind v4 @theme).
+ *
+ * Every `--color-*` becomes a utility (bg-cocoa, text-toffee-deep, border-milk/30 ...),
+ * every `--ease-*` becomes ease-pounce / ease-silk / ease-snap.
+ * Values come from research/DESIGN-SPEC.md section 2.
+ */
+
+/* `static` = always emit the variable, even when no utility uses it yet, so plain CSS can rely on it. */
+@theme static {
+  /* --- Brand palette --- */
+  --color-cocoa: #2a170e; /* main text, outlines, dark buttons */
+  --color-cocoa-soft: #5a3a28; /* secondary text */
+  --color-milk: #fffdf8; /* page background */
+  --color-honey: #f2be6b; /* accent, selection, mobile menu */
+  --color-honey-soft: #fbe3b4; /* chips, soft backgrounds */
+  --color-toffee: #c2622b; /* paws, decorative accents */
+  --color-toffee-deep: #a24a1a; /* primary button, active links */
+  --color-toffee-ink: #8e3f15; /* handwritten accent text */
+  --color-blush: #f9cdbf;
+  --color-sky: #bfddf5;
+  --color-sky-deep: #2f6e9e;
+
+  /* --- Literal colours the original uses outside its theme --- */
+  --color-whatsapp: #1f7a4d; /* WhatsApp button */
+  --color-whatsapp-ink: #1f6b45; /* green stamp ink */
+  --color-night: #24130b; /* footer and last home scene */
+  --color-door-frame: #3b2215; /* door frames, lamp post */
+  --color-paper: #fff8ea; /* passport page, tickets */
+  --color-polaroid: #fffefb;
+  --color-sun: #ffd27f; /* sun and street-lamp glow */
+  --color-error: #b3261e; /* invalid form fields */
+
+  /* --- Motion --- */
+  --ease-pounce: cubic-bezier(0.34, 1.56, 0.64, 1); /* overshoots: used for almost every hover and pop */
+  --ease-silk: cubic-bezier(0.22, 1, 0.36, 1); /* smooth ease-out */
+  --ease-snap: cubic-bezier(0.7, 0, 0.2, 1); /* menu open/close, header hide */
+
+  /* Layout max width used by every page wrapper (110rem = 1760px). */
+  --container-page: 110rem;
+}
+
+/*
+ * Font families. next/font (src/app/fonts.ts) defines --font-fraunces etc. on <html>.
+ * `inline` makes the utilities (font-display, font-hand ...) read those variables directly.
+ */
+@theme inline {
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+  --font-hand: var(--font-shantell), ui-rounded, "Comic Sans MS", cursive;
+}

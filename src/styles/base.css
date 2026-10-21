@@ -1,0 +1,113 @@
+/* Global element defaults, page-level CSS variables and accessibility rules. */
+
+@layer base {
+  :root {
+    color-scheme: light;
+    /* Horizontal page padding: 16px on phones, up to 56px on wide screens. See the `gutter` utility. */
+    --gutter: clamp(1rem, 4vw, 3.5rem);
+    /* Fixed header height; <main> pads itself by this much. */
+    --header-h: 4.75rem;
+    /* Height of the sticky WhatsApp/Call bar (phones only). */
+    --bar-h: 0px;
+    accent-color: var(--color-toffee-deep);
+  }
+
+  @media (max-width: 767px) {
+    :root {
+      --header-h: 4rem;
+      --bar-h: calc(4rem + env(safe-area-inset-bottom));
+    }
+  }
+
+  html {
+    /* Always reserve the scrollbar's width so the layout doesn't jump when the page gets long. */
+    scrollbar-gutter: stable;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    /* Anchor jumps (#delivery) stop below the fixed header. */
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+    /* `clip`, not `hidden`: hidden would break position: sticky (pinned sections). */
+    overflow-x: clip;
+  }
+
+  body {
+    background: var(--color-milk);
+    color: var(--color-cocoa);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem; /* 17px */
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--color-honey);
+    color: var(--color-cocoa);
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-toffee-deep);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+
+  img,
+  video {
+    max-width: 100%;
+  }
+
+  a {
+    color: inherit;
+  }
+
+  /* Paw-print cursor: only for real mouse pointers (not touch) and people who accept motion. */
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    html {
+      cursor:
+        url("/svg/paw-cursor.svg") 9 6,
+        auto;
+    }
+
+    a,
+    button,
+    summary,
+    label,
+    select,
+    [role="tab"] {
+      cursor:
+        url("/svg/paw-press-cursor.svg") 9 6,
+        pointer;
+    }
+
+    input:not([type="checkbox"], [type="radio"], [type="submit"], [type="button"]),
+    textarea {
+      cursor: text;
+    }
+  }
+
+  /* People who ask for less motion get (almost) no transitions or animations. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      scroll-behavior: auto !important;
+      transition-duration: 0.001ms !important;
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
+
+  /* Lenis smooth scroll (see components/layout/SmoothScroll.tsx). */
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: clip;
+  }
+}

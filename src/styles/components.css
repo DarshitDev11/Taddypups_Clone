@@ -1,0 +1,171 @@
+/*
+ * Reusable "ink style" building blocks: buttons, chips, board and paper cards.
+ *
+ * They live in @layer components, so any Tailwind utility on the element
+ * (e.g. `min-h-12`, `shadow-none`) still wins without needing !important.
+ */
+
+@layer components {
+  /* ---------- Buttons (use <Button>, which applies these classes) ---------- */
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    min-height: 3.25rem;
+    padding: 0.85rem 1.6rem;
+    border-radius: 999px;
+    font-size: 1.0625rem;
+    font-weight: 650;
+    line-height: 1.1;
+    text-decoration: none;
+    /* pounce = bouncy lift on hover, silk = smooth growth of the cocoa "ledge" shadow */
+    transition:
+      transform 0.35s var(--ease-pounce),
+      background-color 0.25s ease,
+      box-shadow 0.35s var(--ease-silk);
+  }
+
+  .btn:active {
+    transform: scale(0.96);
+  }
+
+  /* Smaller variant used in the header. */
+  .btn--compact {
+    min-height: 2.75rem;
+    padding: 0.6rem 1.35rem;
+    font-size: 0.95rem;
+  }
+
+  /* Solid button with a cocoa "ledge" 8px underneath that grows on hover. */
+  .btn-primary {
+    background: var(--color-toffee-deep);
+    color: var(--color-milk);
+    box-shadow: 0 0.5rem 0 -0.15rem var(--color-cocoa);
+  }
+
+  .btn-primary:hover {
+    box-shadow: 0 0.7rem 0 -0.15rem var(--color-cocoa);
+    transform: translateY(-2px) rotate(-1deg);
+  }
+
+  .btn-whatsapp {
+    background: var(--color-whatsapp);
+    color: #fff;
+    box-shadow: 0 0.5rem 0 -0.15rem var(--color-cocoa);
+  }
+
+  .btn-whatsapp:hover {
+    transform: translateY(-2px) rotate(1deg);
+  }
+
+  /* Outline button; fills with cocoa on hover. */
+  .btn-ghost {
+    background: transparent;
+    border: 2px solid var(--color-cocoa);
+    color: var(--color-cocoa);
+  }
+
+  .btn-ghost:hover {
+    background: var(--color-cocoa);
+    color: var(--color-milk);
+  }
+
+  /* On dark scenes (Section tone="dark") the ghost button inverts. */
+  [data-tone="dark"] .btn-ghost {
+    border-color: var(--color-milk);
+    color: var(--color-milk);
+  }
+
+  [data-tone="dark"] .btn-ghost:hover {
+    background: var(--color-milk);
+    color: var(--color-cocoa);
+  }
+
+  /* ---------- Chip: small honey pill ("Available" etc.) ---------- */
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 999px;
+    background: var(--color-honey-soft);
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  /* ---------- Cards ---------- */
+
+  /* Board: milk card, 3px cocoa outline, hard offset shadow and a dashed inner ring. */
+  .board {
+    position: relative;
+    padding: clamp(1.1rem, 2.6vw, 1.75rem);
+    border: 3px solid var(--color-cocoa);
+    border-radius: 1.6rem;
+    background: var(--color-milk);
+    color: var(--color-cocoa);
+    box-shadow: 6px 8px rgb(42 23 14 / 0.14);
+  }
+
+  .board::before {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 1.5px dashed rgb(42 23 14 / 0.22);
+    border-radius: 1.2rem;
+    pointer-events: none;
+  }
+
+  /* Paper: warm "passport page" with a faint scallop pattern. */
+  .paper {
+    position: relative;
+    padding: clamp(1.4rem, 3vw, 2.25rem);
+    border: 3px solid var(--color-cocoa);
+    border-radius: 1.4rem;
+    color: var(--color-cocoa);
+    background:
+      radial-gradient(
+          circle at 0 0,
+          transparent 0 17px,
+          rgb(194 98 43 / 0.08) 17px 18.5px,
+          transparent 18.5px
+        )
+        0 0 / 36px 36px,
+      radial-gradient(
+          circle at 18px 18px,
+          transparent 0 17px,
+          rgb(194 98 43 / 0.06) 17px 18.5px,
+          transparent 18.5px
+        )
+        0 0 / 36px 36px,
+      var(--color-paper);
+  }
+
+  /* Arch: door/window shape (round top, soft bottom corners). */
+  .arch {
+    border: 3px solid var(--color-cocoa);
+    border-radius: 999px 999px 1.6rem 1.6rem;
+    background: var(--color-honey-soft);
+  }
+}
+
+@layer components {
+  /*
+   * Scene: a full-width band with a sky gradient (see components/ui/Section.tsx).
+   * The gradient colours arrive as --sky-top / --sky-bottom; dark scenes flip the text colour.
+   */
+  .scene {
+    --ink: var(--color-cocoa);
+    --ink-soft: var(--color-cocoa-soft);
+    position: relative;
+    background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+    color: var(--ink);
+  }
+
+  .scene[data-tone="dark"] {
+    --ink: var(--color-milk);
+    --ink-soft: color-mix(in oklab, var(--color-milk) 80%, transparent);
+  }
+}
