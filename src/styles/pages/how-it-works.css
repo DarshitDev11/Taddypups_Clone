@@ -1,0 +1,492 @@
+/*
+ * /how-it-works: the tab switch, postcards, step cards, passport stamps and the flight scene.
+ * Components: components/how-it-works/*.
+ */
+
+/* ---------- Two ways home ---------- */
+
+.journeys {
+  margin-top: clamp(3.5rem, 8vw, 6rem);
+}
+
+.journeys__top {
+  display: grid;
+  align-items: end;
+  gap: 1.5rem 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .journeys__top {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 36rem);
+  }
+}
+
+.journeys__kicker {
+  color: var(--color-toffee-ink);
+  font-size: 1.2rem;
+}
+
+.journeys__pick {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.journeys__teddy {
+  flex: none;
+  width: clamp(6rem, 17vw, 8.5rem);
+  margin-bottom: -0.5rem;
+}
+
+/* ---------- The switch: a pill with a coloured thumb that slides between the tabs ---------- */
+
+.switch {
+  position: relative;
+  display: grid;
+  /* --n tabs of equal width; --at is the selected one (set from React). */
+  grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+  flex: 1;
+  max-width: 32rem;
+  padding: 0.4rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 999px;
+  background: var(--color-milk);
+  box-shadow: 0 6px 0 -2px rgb(42 23 14 / 0.2);
+}
+
+.switch__thumb {
+  position: absolute;
+  top: 0.4rem;
+  bottom: 0.4rem;
+  left: 0.4rem;
+  width: calc((100% - 0.8rem) / var(--n));
+  border-radius: 999px;
+  background: var(--color-toffee-deep);
+  translate: calc(var(--at) * 100%) 0;
+  transition: translate 0.5s var(--ease-pounce);
+}
+
+.switch__tab {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 0.15rem;
+  padding: 0.75rem 1rem;
+  border-radius: 999px;
+  color: var(--color-cocoa);
+  transition: color 0.3s;
+}
+
+.switch__tab[aria-selected="true"] {
+  color: var(--color-milk);
+}
+
+.switch__label {
+  font-size: clamp(1.25rem, 2.2vw, 1.6rem);
+  line-height: 1;
+}
+
+.switch__hint {
+  font-size: 0.85rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+@media (max-width: 639px) {
+  .journeys__teddy {
+    display: none;
+  }
+
+  .switch {
+    max-width: none;
+  }
+
+  .switch__tab {
+    padding: 0.7rem 0.4rem;
+  }
+
+  .switch__hint {
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+}
+
+/* ---------- One way's panel ---------- */
+
+.journey {
+  margin-top: clamp(2.5rem, 5vw, 3.75rem);
+}
+
+.journey[hidden] {
+  display: none;
+}
+
+.journey__head {
+  display: grid;
+  align-items: center;
+  gap: 2rem;
+}
+
+@media (min-width: 900px) {
+  .journey__head {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 3.5rem;
+  }
+}
+
+.journey__title {
+  font-size: clamp(2rem, 4vw, 3.25rem);
+}
+
+/* ---------- Postcards ---------- */
+
+.postcard {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 1.6rem;
+  background: linear-gradient(#fff1d8, #fbe3b4);
+  rotate: 1.2deg;
+  box-shadow: 8px 10px rgb(42 23 14 / 0.12);
+}
+
+.postcard--sky {
+  background: linear-gradient(#e3f0fb, #fff6e8);
+  rotate: -1.2deg;
+}
+
+.postcard__sun {
+  position: absolute;
+  top: 18%;
+  left: 62%;
+  width: 22%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f7c66b 0 55%, rgb(247 198 107 / 0.35) 56%, transparent 72%);
+}
+
+.postcard__city {
+  position: absolute;
+  inset: auto 0 -2px;
+  width: 100%;
+  color: var(--color-cocoa);
+  opacity: 0.8;
+}
+
+.postcard__route {
+  position: absolute;
+  top: 10%;
+  left: 6%;
+  width: 88%;
+  height: 78%;
+  fill: none;
+  stroke: var(--color-toffee-deep);
+  stroke-width: 3px;
+  stroke-dasharray: 2 9;
+  stroke-linecap: round;
+}
+
+.postcard__plane {
+  position: absolute;
+  top: 16%;
+  left: 41%;
+  width: 18%;
+  color: var(--color-cocoa);
+  scale: -1 1; /* flip the drawing so the plane heads towards Dubai (right) */
+}
+
+.postcard__label {
+  position: absolute;
+  color: var(--color-toffee-ink);
+  font-size: 1.05rem;
+}
+
+.postcard__label--top-left {
+  top: 8%;
+  left: 6%;
+}
+
+.postcard__label--bottom-left {
+  bottom: 7%;
+  left: 5%;
+}
+
+.postcard__label--bottom-right {
+  right: 6%;
+  bottom: 7%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .postcard__plane {
+    animation: plane-bob 3.2s ease-in-out infinite;
+  }
+}
+
+@keyframes plane-bob {
+  50% {
+    translate: 0 -6px;
+    rotate: -3deg;
+  }
+}
+
+/* ---------- Step cards ---------- */
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 1.25rem;
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+
+@media (min-width: 1100px) {
+  .steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+.step {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  padding: 1.5rem 1.4rem 1.6rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 1.6rem;
+  background: var(--color-milk);
+  box-shadow: 6px 8px rgb(42 23 14 / 0.1);
+  transition:
+    translate 0.4s var(--ease-pounce),
+    rotate 0.4s var(--ease-pounce),
+    box-shadow 0.4s var(--ease-silk);
+}
+
+.step:hover {
+  translate: 0 -4px;
+  rotate: -0.6deg;
+  box-shadow: 9px 12px rgb(42 23 14 / 0.12);
+}
+
+/* A blob-shaped tinted badge behind the line icon. */
+.step__icon {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 46% 54% 52% 48% / 55% 45%;
+  background: var(--tint);
+  color: var(--color-toffee-deep);
+}
+
+.step__icon svg {
+  width: 2.6rem;
+  height: 2.6rem;
+}
+
+.step__num {
+  margin-top: 0.6rem;
+  color: var(--color-toffee-ink);
+  font-size: 1rem;
+}
+
+.step__title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.step__text {
+  color: var(--color-cocoa-soft);
+}
+
+/* Cards bounce in one after another when the page loads and every time the tab changes
+   (a panel going from display:none to visible restarts its animations). */
+@media (prefers-reduced-motion: no-preference) {
+  .journeys .step {
+    animation: step-in 0.55s var(--ease-pounce) both;
+    animation-delay: calc(var(--i) * 90ms);
+  }
+}
+
+@keyframes step-in {
+  0% {
+    opacity: 0;
+    translate: 0 1.25rem;
+    rotate: 1.5deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .switch__thumb,
+  .step {
+    transition: none;
+  }
+}
+
+/* ---------- Premium promise: rubber stamps on a passport page ---------- */
+
+.promise-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.promise-entry__text {
+  max-width: 26ch;
+  margin-top: 0.85rem;
+  color: var(--color-cocoa-soft);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.stamp {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  aspect-ratio: 1;
+  width: clamp(8.5rem, 12vw, 10.5rem);
+  padding: 0.8rem;
+  border: 3px solid;
+  color: var(--ink-stamp);
+  rotate: var(--tilt);
+  opacity: 0.9;
+  mix-blend-mode: multiply; /* the ink soaks into the paper pattern */
+  /* Noise mask: an SVG turbulence filter thresholded into speckles, so the ink looks worn and uneven. */
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 2.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")
+    0 0 / 160px 160px;
+}
+
+/* Thin dashed ring inside the border, like a real stamp. */
+.stamp::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1.5px dashed;
+  border-radius: inherit;
+}
+
+.stamp--round {
+  border-radius: 50%;
+}
+
+.stamp--ticket {
+  aspect-ratio: 1.3;
+  border-radius: 0.7rem;
+}
+
+.stamp--oval {
+  aspect-ratio: 1.35;
+  border-radius: 50%;
+}
+
+.stamp__icon {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.stamp__title {
+  max-width: 10ch;
+  font-size: 1.08rem;
+  line-height: 1.05;
+}
+
+/* Where supported, each stamp thumps down (big and faint, then settles) as it scrolls into view. */
+@supports (animation-timeline: view()) {
+  .stamp {
+    animation: stamp-in linear both;
+    animation-timeline: view();
+    animation-range: entry calc(55% + var(--i) * 9%) cover calc(42% + var(--i) * 6%);
+  }
+}
+
+@keyframes stamp-in {
+  0% {
+    opacity: 0;
+    scale: 1.7;
+    rotate: calc(var(--tilt) - 16deg);
+  }
+  55% {
+    opacity: 0.95;
+    scale: 0.93;
+  }
+  75% {
+    scale: 1.03;
+  }
+  100% {
+    opacity: 0.9;
+    scale: 1;
+    rotate: var(--tilt);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stamp {
+    animation: none !important;
+  }
+}
+
+/* ---------- Flight scene (delivery section) ---------- */
+
+.flight {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.flight__route {
+  fill: none;
+  stroke: var(--color-toffee-deep);
+  stroke-width: 3px;
+  stroke-dasharray: 3 11;
+  stroke-linecap: round;
+}
+
+.flight__dot {
+  fill: var(--color-toffee-deep);
+}
+
+.flight__label {
+  fill: var(--ink-soft);
+  font-family: var(--font-hand);
+  font-size: 19px;
+}
+
+.flight__body,
+.flight__wing {
+  stroke: var(--color-cocoa);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+.flight__body {
+  fill: var(--color-milk);
+}
+
+.flight__wing {
+  fill: var(--color-toffee);
+}
+
+.flight__wing--far {
+  fill: var(--color-toffee-deep);
+}
+
+.flight__line {
+  fill: none;
+  stroke: var(--color-cocoa);
+  stroke-width: 3.5px;
+  stroke-linecap: round;
+}
+
+@media (max-width: 639px) {
+  .flight {
+    width: 86%;
+  }
+}
