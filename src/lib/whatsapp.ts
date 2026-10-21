@@ -10,6 +10,9 @@ export const whatsappMessages = {
   /** e.g. "Hi TeddyPups! I'm interested in Max, the Maltipoo: https://…/puppies/maltipoo-max-male" */
   puppy: (puppy: Pick<Puppy, "slug" | "name" | "breed">) =>
     `Hi TeddyPups! I'm interested in ${puppy.name}, the ${puppy.breed}: ${siteConfig.url}/puppies/${puppy.slug}`,
+  /** For a puppy that has gone home: ask whether there is another one like it. */
+  similarPuppy: (puppy: Pick<Puppy, "slug" | "name">) =>
+    `Hi TeddyPups! I loved ${puppy.name} (${siteConfig.url}/puppies/${puppy.slug}). Do you have a puppy like them?`,
 } as const;
 
 /** https://wa.me/<number>?text=<url-encoded message> */

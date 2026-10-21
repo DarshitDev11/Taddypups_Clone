@@ -1,0 +1,231 @@
+/*
+ * /gone-home: ticket booth header and the wall of "admit one" tickets.
+ * Reveal states come from components/puppies/Reveal.tsx (see puppies.css for the three-state convention).
+ */
+
+/* ---------- Header with the ticket booth ---------- */
+
+.booth-head {
+  display: grid;
+  align-items: end;
+  gap: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .booth-head {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+.booth {
+  --bw: clamp(11rem, 30vw, 15rem);
+  position: relative;
+  justify-self: end;
+  width: var(--bw);
+}
+
+.booth__teddy {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+/* The counter overlaps Teddy's lower half so the pup seems to peek over it. */
+.booth__counter {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  height: calc(var(--bw) * 0.42);
+  margin-top: calc(var(--bw) * -0.272);
+  padding-top: 2rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 0.9rem 0.9rem 0.4rem 0.4rem;
+  /* Layers, top to bottom: awning rule, toffee/milk awning stripes, cream counter. */
+  background:
+    linear-gradient(var(--color-cocoa), var(--color-cocoa)) 0 2.05rem / 100% 3px no-repeat,
+    repeating-linear-gradient(90deg, var(--color-toffee) 0 1.3rem, var(--color-milk) 1.3rem 2.6rem) 0 0 / 100%
+      2.05rem no-repeat,
+    linear-gradient(#fff1d8, #fbe3b4);
+  box-shadow: 6px 8px rgb(42 23 14 / 0.14);
+}
+
+.booth__counter span {
+  color: var(--color-toffee-ink);
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+}
+
+/* ---------- Ticket wall ---------- */
+
+.tickets {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 21rem), 1fr));
+  gap: 2.25rem 1.75rem;
+  margin-top: clamp(3rem, 7vw, 5rem);
+}
+
+.ticket {
+  rotate: var(--tilt);
+  transition: rotate 0.45s var(--ease-pounce);
+}
+
+.ticket:hover {
+  rotate: 0deg;
+}
+
+.ticket__link {
+  position: relative;
+  display: flex;
+  min-height: 9.5rem;
+  border-radius: 1rem;
+  /* drop-shadow (not box-shadow) so the shadow follows the notched ticket outline. */
+  filter: drop-shadow(5px 7px rgb(42 23 14 / 0.16));
+  transition:
+    translate 0.45s var(--ease-pounce),
+    filter 0.45s var(--ease-silk);
+}
+
+.ticket__link:hover {
+  filter: drop-shadow(8px 12px rgb(42 23 14 / 0.18));
+  translate: 0 -4px;
+}
+
+.ticket__main,
+.ticket__stub {
+  position: relative;
+  border: 3px solid var(--color-cocoa);
+  background: #fff8ea;
+}
+
+/* The main part has half-circle bites out of its right corners; the stub mirrors them on its left. */
+.ticket__main {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  padding: 0.95rem 1rem 0.95rem 0.95rem;
+  border-right: 0;
+  border-radius: 1rem 0 0 1rem;
+  mask:
+    radial-gradient(circle at 100% 0, #0000 0.62rem, #000 0.66rem) 100% 0 / 51% 51% no-repeat,
+    radial-gradient(circle at 100% 100%, #0000 0.62rem, #000 0.66rem) 100% 100% / 51% 51% no-repeat,
+    linear-gradient(#000, #000) 0 / 50% 100% no-repeat;
+}
+
+.ticket__photo {
+  position: relative;
+  flex: none;
+  width: clamp(5.4rem, 22vw, 6.6rem);
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 50%;
+  background: var(--color-honey-soft);
+}
+
+.ticket__body {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.ticket__kicker {
+  font-size: 0.9rem;
+  color: var(--color-toffee-ink);
+}
+
+.ticket__name {
+  overflow: hidden;
+  font-size: clamp(1.4rem, 2vw, 1.75rem);
+  line-height: 1.05;
+  text-overflow: ellipsis;
+}
+
+.ticket__meta {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-cocoa-soft);
+}
+
+.ticket__route {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-top: 0.4rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--color-cocoa);
+}
+
+.ticket__route svg {
+  width: 2.6rem;
+  fill: none;
+  stroke: var(--color-toffee-deep);
+  stroke-width: 2.4px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 3 4;
+}
+
+/* Only the shaft is dotted; the arrowhead (second path) stays solid. */
+.ticket__route svg path + path {
+  stroke-dasharray: none;
+}
+
+.ticket__stub {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 3.4rem;
+  border-left: 3px dashed rgb(42 23 14 / 0.55);
+  border-radius: 0 1rem 1rem 0;
+  background: var(--color-honey);
+  transform-origin: 0 0;
+  transition: rotate 0.5s var(--ease-pounce);
+  mask:
+    radial-gradient(circle at 0 0, #0000 0.62rem, #000 0.66rem) 0 0 / 51% 51% no-repeat,
+    radial-gradient(circle at 0 100%, #0000 0.62rem, #000 0.66rem) 0 100% / 51% 51% no-repeat,
+    linear-gradient(#000, #000) 100% / 50% 100% no-repeat;
+}
+
+.ticket__stub span {
+  writing-mode: vertical-rl;
+  rotate: 180deg;
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  color: var(--color-cocoa);
+}
+
+/* Hover tears the stub slightly away, hinged at its top-left corner. */
+.ticket__link:hover .ticket__stub {
+  rotate: 7deg;
+}
+
+/* Entrance: the ticket unrolls downwards, one after another (--i is the position in the list). */
+.ticket[data-armed]:not([data-revealed]) .ticket__link {
+  clip-path: inset(0 0 100%);
+  translate: 0 -0.9rem;
+}
+
+.ticket[data-armed] .ticket__link {
+  transition:
+    clip-path 0.7s var(--ease-silk) calc(var(--i) * 80ms),
+    translate 0.7s var(--ease-silk) calc(var(--i) * 80ms),
+    filter 0.45s var(--ease-silk);
+}
+
+/* Negative inset so the drop shadow isn't clipped once revealed. */
+.ticket[data-revealed] .ticket__link {
+  clip-path: inset(-2rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket,
+  .ticket__link,
+  .ticket__stub {
+    transition: none !important;
+  }
+}

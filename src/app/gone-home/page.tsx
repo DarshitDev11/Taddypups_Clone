@@ -1,10 +1,10 @@
-// PLACEHOLDER /gone-home page: lists puppies that found a family.
-// Replace with the "admit one" ticket design (research/DESIGN-SPEC.md section 4.4).
+// /gone-home: every puppy that found a family, as a wall of "admit one" tickets.
 
-import Link from "next/link";
+import { HeartIcon } from "@/components/decor/icons";
+import { Ticket } from "@/components/puppies/Ticket";
+import { TicketBooth } from "@/components/puppies/TicketBooth";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { PageHeader } from "@/components/ui/PageHeader";
 import { pageMetadata } from "@/lib/metadata";
 import { getGoneHomePuppies } from "@/lib/puppies";
 
@@ -14,22 +14,31 @@ export default function GoneHomePage() {
   const puppies = getGoneHomePuppies();
 
   return (
-    <Container className="min-h-[70vh] pt-10 pb-24 md:pt-16">
-      <PageHeader
-        title="Gone home"
-        lede="Every puppy here has already joined a loving family. Looking for one just like them? Tell us — we'll help you find your match."
-        actions={<Button href="/puppies">See available puppies</Button>}
-      />
-      <ul className="mt-12 grid gap-x-8 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
-        {puppies.map((puppy) => (
-          <li key={puppy.slug}>
-            <Link href={`/puppies/${puppy.slug}`} className="link-ink font-semibold">
-              {puppy.name}
-            </Link>
-            <span className="text-cocoa-soft"> · {puppy.breed}</span>
-          </li>
-        ))}
-      </ul>
-    </Container>
+    <div data-page="gone">
+      <Container className="pt-10 pb-24 md:pt-16">
+        <header className="booth-head">
+          <div className="max-w-3xl">
+            <h1 className="font-plush text-giant">
+              Gone home
+              <HeartIcon className="ml-3 inline-block w-[0.45em] -translate-y-[0.15em] text-toffee" />
+            </h1>
+            <p className="text-lede mt-6 text-cocoa-soft">
+              Every puppy here has already joined a loving family. Looking for one just like them? Tell us —
+              we&apos;ll help you find your match.
+            </p>
+            <Button href="/puppies" className="mt-8">
+              See available puppies
+            </Button>
+          </div>
+          <TicketBooth />
+        </header>
+
+        <ul className="tickets" aria-label="Puppies who have gone home">
+          {puppies.map((puppy, index) => (
+            <Ticket key={puppy.slug} puppy={puppy} index={index} />
+          ))}
+        </ul>
+      </Container>
+    </div>
   );
 }

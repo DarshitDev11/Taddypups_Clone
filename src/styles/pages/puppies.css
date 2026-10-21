@@ -1,0 +1,428 @@
+/*
+ * /puppies "sketchbook": dotted paper, taped filter pad, sticker chips, hand-drawn puppy cards.
+ *
+ * Reveal states come from components/puppies/Reveal.tsx:
+ *   (no attribute)                -> finished state (what no-JS visitors see)
+ *   [data-armed]:not([data-revealed]) -> hidden/undrawn, ready to animate in
+ *   [data-revealed]               -> the transitions below play
+ */
+
+.sketchbook {
+  background:
+    radial-gradient(circle at 1px 1px, rgb(42 23 14 / 0.09) 1px, transparent 1.6px) 0 0 / 26px 26px,
+    linear-gradient(180deg, #fff8ec, var(--color-milk) 60%);
+}
+
+/* ---------- Page head ---------- */
+
+.sketchbook__head {
+  display: grid;
+  align-items: end;
+  gap: 2rem 3rem;
+}
+
+@media (min-width: 768px) {
+  .sketchbook__head {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+.sketchbook__title {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.18em;
+}
+
+/* One toffee stroke under the title, drawn on by animating its dash offset. */
+.sketchbook__underline {
+  position: absolute;
+  bottom: -0.05em;
+  left: 0;
+  width: 100%;
+  height: 0.24em;
+  overflow: visible;
+}
+
+.sketchbook__underline path {
+  fill: none;
+  stroke: var(--color-toffee);
+  stroke-width: 7px;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 0.9s var(--ease-silk) 0.25s;
+}
+
+.sketchbook__title[data-armed]:not([data-revealed]) .sketchbook__underline path {
+  stroke-dashoffset: 1px;
+}
+
+/* Teddy's self-portrait: a wobbly circle with a second thin ring drawn slightly off, like a pencil redo. */
+.sketchbook__self {
+  position: relative;
+  justify-self: end;
+  width: clamp(9rem, 26vw, 13rem);
+  aspect-ratio: 1;
+  padding: 1.4rem 1.2rem 0.6rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 52% 48% 50% 50% / 50% 52% 48% 50%;
+  background: color-mix(in oklab, var(--color-honey-soft) 70%, var(--color-milk));
+}
+
+.sketchbook__self::after {
+  content: "";
+  position: absolute;
+  inset: -7px -4px -5px -6px;
+  border: 2px solid rgb(42 23 14 / 0.45);
+  border-radius: 48% 52% 47% 53% / 53% 47%;
+  rotate: -6deg;
+  pointer-events: none;
+}
+
+.sketchbook__caption {
+  position: absolute;
+  bottom: -2rem;
+  left: 50%;
+  translate: -50%;
+  white-space: nowrap;
+  color: var(--color-cocoa-soft);
+}
+
+/* On phones the intro text and the portrait share a row: text left, portrait right. */
+@media (max-width: 767px) {
+  .sketchbook__head {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0 1rem;
+  }
+
+  .sketchbook__words {
+    display: contents;
+  }
+
+  .sketchbook__words > * {
+    grid-column: 1 / -1;
+  }
+
+  .sketchbook__words > .sketchbook__lede {
+    grid-column: 1;
+    font-size: 1.0625rem;
+  }
+
+  .sketchbook__self {
+    grid-column: 2;
+    width: clamp(7.5rem, 34vw, 9.5rem);
+    margin-top: 1.5rem;
+  }
+}
+
+/* Plain fade-and-rise for the head text (cards have their own, richer entrance). */
+.sketchbook [data-reveal]:not(.sketch) {
+  transition:
+    opacity 0.6s ease,
+    translate 0.7s var(--ease-silk);
+}
+
+.sketchbook [data-reveal][data-armed]:not([data-revealed]):not(.sketch):not(.sketchbook__title) {
+  opacity: 0;
+  translate: 0 1rem;
+}
+
+/* ---------- Filter pad ---------- */
+
+.sketchpad {
+  position: relative;
+  padding: clamp(1.1rem, 2.6vw, 1.6rem) clamp(1.1rem, 2.6vw, 1.75rem);
+  border: 3px solid var(--color-cocoa);
+  border-radius: 1.2rem 1.6rem 1.3rem 1.5rem;
+  background: var(--color-milk);
+  box-shadow: 5px 7px rgb(42 23 14 / 0.12);
+  rotate: -0.35deg;
+}
+
+/* A strip of masking tape holding the pad to the page. */
+.sketchpad::before,
+.no-puppies::before {
+  content: "";
+  position: absolute;
+  top: -0.85rem;
+  left: 2.2rem;
+  width: 5.5rem;
+  height: 1.5rem;
+  background: color-mix(in oklab, var(--color-honey) 55%, white);
+  opacity: 0.85;
+  rotate: -4deg;
+  box-shadow: 0 1px 2px rgb(42 23 14 / 0.15);
+}
+
+.sticker-chip {
+  min-height: 2.75rem;
+  padding: 0.45rem 1rem;
+  border: 2px solid var(--color-cocoa);
+  border-radius: 999px;
+  background: var(--color-milk);
+  font-size: 0.95rem;
+  font-weight: 650;
+  box-shadow: 2px 3px rgb(42 23 14 / 0.14);
+  transition:
+    background-color 0.25s,
+    color 0.25s,
+    rotate 0.35s var(--ease-pounce),
+    translate 0.35s var(--ease-pounce),
+    box-shadow 0.25s;
+}
+
+.sticker-chip:hover {
+  background: var(--color-honey-soft);
+  translate: 0 -1px;
+}
+
+.sticker-chip:active {
+  translate: 0 1px;
+  box-shadow: 0 0 rgb(42 23 14 / 0.14);
+}
+
+/* Pressed = stuck down: dark, tilted, with a flatter shadow. */
+.sticker-chip[aria-pressed="true"] {
+  background: var(--color-cocoa);
+  color: var(--color-milk);
+  rotate: -2deg;
+  box-shadow: 1px 2px rgb(42 23 14 / 0.25);
+}
+
+/* ---------- Sketch grid ---------- */
+
+.sketches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(14.5rem, 40vw), 1fr));
+  gap: 3.25rem clamp(1.1rem, 3vw, 2.5rem);
+  padding-inline: 0.4rem;
+}
+
+/* Every second card drops down a little so the grid feels pinned up by hand, not ruled. */
+@media (min-width: 640px) {
+  .sketches {
+    padding-bottom: 2.4rem;
+  }
+
+  .sketches > li:nth-child(2n) {
+    translate: 0 2.4rem;
+  }
+}
+
+/* ---------- Sketch card ---------- */
+
+.sketch__link {
+  position: relative;
+  display: block;
+  border-radius: 1rem;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+}
+
+.sketch__frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 1;
+  rotate: var(--tilt);
+  transition:
+    rotate 0.6s var(--ease-pounce),
+    scale 0.35s var(--ease-pounce);
+}
+
+.sketch__wash {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--wash);
+  opacity: 0.55;
+  transition:
+    opacity 0.6s ease,
+    scale 0.8s var(--ease-silk);
+}
+
+/* The photo is cut to an organic blob by --mask (an inline SVG data URI made in sketchShapes.ts). */
+.sketch__photo {
+  position: absolute;
+  inset: 4.5%;
+  display: block;
+  overflow: hidden;
+  background: var(--color-honey-soft);
+  clip-path: circle(75%);
+  mask-image: var(--mask);
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  transition: clip-path 0.85s var(--ease-silk) calc(var(--d) + 0.12s);
+}
+
+.sketch__photo img {
+  transition: scale 0.45s var(--ease-silk);
+}
+
+.sketch__ink {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* The pen line is drawn on by animating stroke-dashoffset from 1 to 0 (pathLength is 1). */
+.sketch__line {
+  fill: none;
+  stroke: var(--color-cocoa);
+  stroke-width: 1.9px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  transition:
+    stroke-dashoffset 1s var(--ease-silk) var(--d),
+    stroke 0.3s;
+}
+
+.sketch__line--retrace {
+  stroke-width: 1.2px;
+  opacity: 0.55;
+  transition-delay: calc(var(--d) + 0.26s), 0s;
+}
+
+.sketch__doodle {
+  transform-box: fill-box;
+  transform-origin: 50%;
+  transition:
+    scale 0.5s var(--ease-pounce) calc(var(--d) + 0.52s),
+    opacity 0.3s calc(var(--d) + 0.52s);
+}
+
+.sketch__sticker {
+  transition:
+    scale 0.45s var(--ease-pounce) calc(var(--d) + 0.64s),
+    opacity 0.3s calc(var(--d) + 0.64s);
+}
+
+.sketch__name {
+  display: block;
+  margin-top: 1rem;
+  font-size: clamp(1.35rem, 2vw, 1.85rem);
+  line-height: 1.02;
+  transition: color 0.25s;
+}
+
+.sketch__meta {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-cocoa-soft);
+}
+
+/* Before the entrance: nothing drawn yet. */
+.sketch[data-armed]:not([data-revealed]) .sketch__line {
+  stroke-dashoffset: 1px;
+}
+
+.sketch[data-armed]:not([data-revealed]) .sketch__photo {
+  clip-path: circle(0% at 50% 55%);
+}
+
+.sketch[data-armed]:not([data-revealed]) :is(.sketch__doodle, .sketch__sticker) {
+  opacity: 0;
+  scale: 0;
+}
+
+.sketch[data-armed]:not([data-revealed]) .sketch__wash {
+  opacity: 0;
+  scale: 0.85;
+}
+
+/* Hover and keyboard focus: tilt the other way, ink turns toffee, doodles hop. */
+.sketch__link:is(:hover, :focus-visible) .sketch__frame {
+  rotate: calc(var(--tilt) * -1);
+}
+
+.sketch__link:is(:hover, :focus-visible) .sketch__photo img {
+  scale: 1.06;
+}
+
+.sketch__link:is(:hover, :focus-visible) .sketch__line {
+  stroke: var(--color-toffee-deep);
+}
+
+.sketch__link:is(:hover, :focus-visible) .sketch__doodle {
+  animation: doodle-hop 0.5s var(--ease-pounce);
+}
+
+.sketch__link:is(:hover, :focus-visible) .sketch__name {
+  color: var(--color-toffee-deep);
+}
+
+.sketch__link:focus-visible .sketch__line {
+  stroke-width: 3px;
+}
+
+.sketch__link:active .sketch__frame {
+  scale: 0.96;
+}
+
+@keyframes doodle-hop {
+  40% {
+    rotate: 12deg;
+    scale: 1.35;
+  }
+}
+
+.sketch--small .sketch__name {
+  margin-top: 0.7rem;
+  font-size: 1.15rem;
+}
+
+/* ---------- Empty state ---------- */
+
+.no-puppies {
+  position: relative;
+  display: grid;
+  align-items: center;
+  gap: 1.5rem 2.5rem;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  border: 3px solid var(--color-cocoa);
+  border-radius: 1.2rem 1.6rem 1.3rem 1.5rem;
+  background: var(--color-milk);
+  box-shadow: 5px 7px rgb(42 23 14 / 0.12);
+}
+
+.no-puppies__teddy {
+  width: clamp(9rem, 22vw, 14rem);
+  justify-self: center;
+}
+
+@media (min-width: 768px) {
+  .no-puppies {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}
+
+/* ---------- "Already gone home" strip ---------- */
+
+.gone-strip {
+  padding-block: clamp(4rem, 9vh, 6rem);
+  background:
+    radial-gradient(circle at 1px 1px, rgb(42 23 14 / 0.08) 1px, transparent 1.6px) 0 0 / 26px 26px,
+    var(--color-honey-soft);
+}
+
+.gone-strip__row {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  gap: 2rem 1.5rem;
+}
+
+/* Muted photos: these puppies are no longer looking for a home. */
+.gone-strip__row .sketch__photo {
+  filter: saturate(0.75) sepia(0.12);
+}
