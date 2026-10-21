@@ -1,11 +1,14 @@
-// PLACEHOLDER /puppies page: shows the data layer works by listing available puppies.
-// Replace with the sketchbook design and filters (research/DESIGN-SPEC.md section 4.2).
+// /puppies: the sketchbook of available puppies, with filters kept in the URL, then the "gone home" strip.
 
-import Link from "next/link";
+import { Suspense } from "react";
+import { FilterPad } from "@/components/puppies/FilterPad";
+import { GoneStrip } from "@/components/puppies/GoneStrip";
+import { PuppyBrowser } from "@/components/puppies/PuppyBrowser";
+import { PuppyResults } from "@/components/puppies/PuppyResults";
+import { SketchbookHead } from "@/components/puppies/SketchbookHead";
 import { Container } from "@/components/ui/Container";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { genderLabels, getAvailablePuppies } from "@/lib/puppies";
 import { pageMetadata } from "@/lib/metadata";
+import { getAvailablePuppies } from "@/lib/puppies";
 
 export const metadata = pageMetadata("puppies");
 
@@ -13,25 +16,32 @@ export default function PuppiesPage() {
   const puppies = getAvailablePuppies();
 
   return (
-    <Container className="min-h-[70vh] pt-10 pb-24 md:pt-16">
-      <PageHeader
-        kicker="from Teddy's sketchbook"
-        title="Available puppies"
-        lede="Every listing shows real photos of the actual puppy. Open a profile to see them all, then ask us about them on WhatsApp."
-      />
-      <ul className="mt-12 grid gap-x-8 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
-        {puppies.map((puppy) => (
-          <li key={puppy.slug}>
-            <Link href={`/puppies/${puppy.slug}`} className="link-ink font-semibold">
-              {puppy.name}
-            </Link>
-            <span className="text-cocoa-soft">
-              {" "}
-              · {genderLabels[puppy.gender].toLowerCase()} · {puppy.age}
-            </span>
-          </li>
-        ))}
-      </ul>
-    </Container>
+    <div data-page="pups">
+      <section aria-labelledby="pups-title" className="sketchbook">
+        <Container className="pb-24 pt-10 md:pt-16">
+          <SketchbookHead />
+
+          <div className="mt-12">
+            {/*
+              PuppyBrowser reads the URL, which a statically built page cannot do, so it must sit in
+              <Suspense>. The fallback is the same page with no filters: the built HTML lists every
+              puppy and the browser takes over from there.
+            */}
+            <Suspense
+              fallback={
+                <>
+                  <FilterPad filters={{}} />
+                  <PuppyResults puppies={puppies} total={puppies.length} isFiltered={false} />
+                </>
+              }
+            >
+              <PuppyBrowser puppies={puppies} />
+            </Suspense>
+          </div>
+        </Container>
+      </section>
+
+      <GoneStrip />
+    </div>
   );
 }
