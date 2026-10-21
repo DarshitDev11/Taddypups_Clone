@@ -148,7 +148,7 @@ export function HeroLineup({ puppies }: HeroLineupProps) {
       <ul className="home-lineup home-lineup--tags" aria-hidden="true">
         {seatPuppy.map((puppyIndex, seat) => (
           <li key={seat} className="home-lineup__seat" style={{ "--i": seat } as CSSProperties}>
-            <span className="home-lineup__name" data-show={tagSeat === seat || hoverSeat === seat}>
+            <span className="home-lineup__name font-scrawl" data-show={tagSeat === seat || hoverSeat === seat}>
               {puppies[puppyIndex].name}
             </span>
           </li>

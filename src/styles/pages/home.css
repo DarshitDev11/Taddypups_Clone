@@ -1,0 +1,2330 @@
+/*
+ * Home page scenes, in page order (morning -> night). Every class starts with `home-` so it cannot clash with
+ * other pages. Values are measured from the original site (research/DESIGN-SPEC.md section 4.1).
+ *
+ * Scenes get --ink / --ink-soft (text colours) and their sky gradient from the `.scene` class in components.css.
+ * Scroll-driven animations (`animation-timeline: view()`) always sit behind @supports; without support the
+ * element simply shows its finished state, which is also what reduced-motion visitors get.
+ */
+
+/* ---------- Shared bits ---------- */
+
+/* A still Teddy placed in a scene. Each scene sizes and positions its own (see the *__teddy rules below). */
+.home-stop {
+  position: relative;
+}
+
+.home-stop .teddy {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* On phones the original swaps most scene mascots for a small one that peeks in from the screen edge. */
+@media (max-width: 767px) {
+  .home-meet__teddy,
+  .home-journey__teddy,
+  .home-night__pup {
+    display: none;
+  }
+}
+
+/* ======================================================================
+   1. Hero (morning)
+   ====================================================================== */
+
+.home-hero {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100svh - var(--header-h));
+  overflow-x: clip;
+}
+
+/* Soft glow behind the headline that rises as the page loads. */
+.home-hero__sun {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  translate: -50%;
+  width: min(86vw, 58rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--color-honey) 42%, transparent) 0,
+    color-mix(in oklab, var(--color-honey-soft) 30%, transparent) 38%,
+    transparent 66%
+  );
+  pointer-events: none;
+  animation: home-sunrise 2.6s var(--ease-silk) both;
+}
+
+@keyframes home-sunrise {
+  0% {
+    opacity: 0;
+    translate: -50% 16%;
+  }
+}
+
+.home-hero__copy {
+  position: relative;
+  padding-top: clamp(1rem, 4.5vh, 3.75rem);
+  text-align: center;
+}
+
+.home-hero__note {
+  position: relative;
+  display: inline-block;
+  color: var(--color-toffee-ink);
+  font-size: clamp(1.1rem, 1.7vw, 1.5rem);
+}
+
+.home-hero__title {
+  max-width: 15ch;
+  margin: clamp(0.5rem, 1.6vh, 1.1rem) auto 0;
+  /* min(vw, vh) keeps the headline from pushing the puppies off short screens. */
+  font-size: clamp(2.6rem, min(9.2vw, 11vh), 8.4rem);
+}
+
+.home-hero__lede {
+  max-width: 46ch;
+  margin: clamp(0.9rem, 2.2vh, 1.4rem) auto 0;
+  color: var(--ink-soft);
+  font-size: clamp(1.05rem, 1.25vw, 1.28rem);
+  line-height: 1.5;
+}
+
+.home-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: clamp(1.1rem, 3vh, 2rem);
+}
+
+/* The stage fills what is left of the first screen; the lineup and quilt are placed against its bottom edge. */
+.home-hero__stage {
+  --quilt-h: clamp(4.5rem, 12vh, 8rem);
+  --tw: clamp(15rem, min(30vw, 46vh), 27rem); /* Teddy's width */
+  --rise: clamp(0.75rem, 2.4vh, 1.75rem); /* extra photo height hidden behind the quilt */
+  position: relative;
+  flex: 1;
+  min-height: clamp(14rem, 38vh, 25rem);
+  margin-top: clamp(0.5rem, 2vh, 1.5rem);
+}
+
+/* Teddy rests his paws on the quilt, in the middle of the lineup. */
+.home-hero__teddy {
+  position: absolute;
+  left: calc(50% - var(--tw) * 0.7067);
+  bottom: calc(var(--quilt-h) + 30px - var(--tw) * 0.2733);
+  width: var(--tw);
+}
+
+/* Quilt: diamond lattice (bg-lattice) with a scalloped top edge; it hides the lower part of the photos. */
+.home-quilt {
+  --lattice-bg: var(--quilt);
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 25;
+  height: var(--quilt-h);
+}
+
+/* ---------- Lineup of arched photos ---------- */
+
+.home-lineup-wrap,
+.home-lineup {
+  position: absolute;
+  inset: 0;
+}
+
+/* Name tags are drawn above the quilt (z 31), so they are in a second list and never block clicks. */
+.home-lineup--tags {
+  z-index: 31;
+  pointer-events: none;
+}
+
+/* Where each seat stands: --x centre (% of stage), --w width, --peek share of the photo showing, --tilt lean. */
+.home-lineup__seat {
+  --seat-k: 1;
+  --h0: calc(var(--w) * var(--seat-k) * 1.25); /* photo height */
+  --h: calc(var(--h0) + var(--rise, 0px));
+  position: absolute;
+  left: var(--x);
+  bottom: calc(var(--quilt-h) - (1 - var(--peek)) * var(--h0));
+  width: calc(var(--w) * var(--seat-k));
+  translate: -50%;
+  rotate: var(--tilt);
+}
+
+.home-lineup__seat:nth-child(1) {
+  --x: 9%;
+  --w: 8.6rem;
+  --peek: 0.62;
+  --tilt: -5deg;
+  --tag-x: -22%;
+}
+.home-lineup__seat:nth-child(2) {
+  --x: 22.5%;
+  --w: 10.4rem;
+  --peek: 0.8;
+  --tilt: 3deg;
+}
+.home-lineup__seat:nth-child(3) {
+  --x: 35%;
+  --w: 9.2rem;
+  --peek: 0.7;
+  --tilt: -2deg;
+}
+.home-lineup__seat:nth-child(4) {
+  --x: 65%;
+  --w: 9.4rem;
+  --peek: 0.74;
+  --tilt: 3deg;
+}
+.home-lineup__seat:nth-child(5) {
+  --x: 77.5%;
+  --w: 10.6rem;
+  --peek: 0.82;
+  --tilt: -3deg;
+}
+.home-lineup__seat:nth-child(6) {
+  --x: 91%;
+  --w: 8.4rem;
+  --peek: 0.6;
+  --tilt: 4deg;
+  --tag-x: -78%;
+}
+
+/* The tag list's seats need the photo's height so each tag can sit on top of its photo. */
+.home-lineup--tags .home-lineup__seat {
+  height: var(--h);
+}
+
+.home-lineup__pup {
+  position: relative;
+  display: block;
+  border-radius: 999px 999px 0 0;
+  /* Pop up from behind the quilt one after another when the page loads. */
+  animation: home-peek 0.75s var(--ease-pounce) backwards;
+  animation-delay: calc(0.62s + var(--i) * 90ms);
+}
+
+@keyframes home-peek {
+  0% {
+    translate: 0 100%;
+  }
+}
+
+.home-lineup__photo {
+  position: relative;
+  display: block;
+  height: var(--h);
+  overflow: hidden;
+  border: 3px solid var(--color-cocoa);
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+  background: var(--color-honey-soft);
+  box-shadow: inset 0 0 0 4px var(--color-milk);
+  transition: translate 0.45s var(--ease-pounce);
+}
+
+.home-lineup__pup:is(:hover, :focus-visible) .home-lineup__photo {
+  translate: 0 -12%;
+}
+
+/* Swap sequence driven by HeroLineup: duck behind the quilt, change photo, pop back up. */
+.home-lineup__pup[data-state="duck"] .home-lineup__photo {
+  translate: 0 108%;
+  scale: 0.92;
+  opacity: 0.6;
+  transition:
+    translate 0.34s var(--ease-snap),
+    scale 0.34s var(--ease-snap),
+    opacity 0.34s ease-in;
+}
+
+.home-lineup__pup[data-state="pop"] .home-lineup__photo {
+  animation: home-pop-up 0.58s var(--ease-pounce) both;
+}
+
+@keyframes home-pop-up {
+  0% {
+    opacity: 0.6;
+    translate: 0 108%;
+    scale: 0.92;
+  }
+  65% {
+    opacity: 1;
+    scale: 1.04;
+  }
+  100% {
+    opacity: 1;
+    translate: 0;
+    scale: 1;
+  }
+}
+
+.home-lineup__name {
+  position: absolute;
+  bottom: calc(100% + 0.4rem);
+  left: 50%;
+  translate: var(--tag-x, -50%) 0.4rem;
+  padding: 0.1rem 0.7rem;
+  border: 2px solid var(--color-cocoa);
+  border-radius: 999px;
+  background: var(--color-milk);
+  font-size: 0.95rem;
+  white-space: nowrap;
+  opacity: 0;
+  transition:
+    opacity 0.2s,
+    translate 0.35s var(--ease-pounce);
+}
+
+.home-lineup__name[data-show="true"] {
+  opacity: 1;
+  translate: var(--tag-x, -50%) -12%;
+}
+
+/* A hidden copy of the next photo, so it is already loaded when the swap happens. */
+.home-lineup__preload {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  pointer-events: none;
+}
+
+/* Phones: six narrow, overlapping seats, with more of each photo showing. */
+@media (max-width: 639px) {
+  .home-hero__stage {
+    --tw: clamp(13rem, 60vw, 17rem);
+    min-height: clamp(14rem, 36vh, 19rem);
+  }
+
+  .home-lineup__seat {
+    --w: 17vw;
+  }
+  .home-lineup__seat:nth-child(1) {
+    --x: 8%;
+    --peek: 1.18;
+    --tag-x: -12%;
+    z-index: 1;
+  }
+  .home-lineup__seat:nth-child(2) {
+    --x: 21%;
+    --peek: 1.3;
+    --tag-x: -30%;
+    z-index: 2;
+  }
+  .home-lineup__seat:nth-child(3) {
+    --x: 33.5%;
+    --peek: 1.12;
+    z-index: 3;
+  }
+  .home-lineup__seat:nth-child(4) {
+    --x: 66.5%;
+    --peek: 1.12;
+    z-index: 3;
+  }
+  .home-lineup__seat:nth-child(5) {
+    --x: 79%;
+    --peek: 1.3;
+    --tag-x: -70%;
+    z-index: 2;
+  }
+  .home-lineup__seat:nth-child(6) {
+    --x: 92%;
+    --peek: 1.18;
+    --tag-x: -88%;
+    z-index: 1;
+  }
+
+  .home-lineup__name {
+    max-width: 46vw;
+    overflow: hidden;
+    font-size: 0.82rem;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Tablets: slightly smaller photos. */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .home-lineup__seat {
+    --seat-k: 0.8;
+  }
+}
+
+/* ======================================================================
+   2. Meet the pups (doors)
+   Below 1024px: a grid of doors that open as they scroll into view.
+   From 1024px: MeetScroller sets [data-pinned]; the stage sticks to the screen and the track slides sideways.
+   ====================================================================== */
+
+.home-meet__stage {
+  position: relative;
+  padding-top: clamp(4rem, 9vh, 7rem);
+  padding-bottom: clamp(3rem, 7vh, 5rem);
+}
+
+.home-meet__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem 2rem;
+  width: 100%;
+  max-width: 110rem;
+  margin-inline: auto;
+}
+
+.home-meet__hall {
+  --floor-h: clamp(5rem, 13vh, 8rem);
+  position: relative;
+  margin-top: clamp(2rem, 5vh, 3.5rem);
+}
+
+.home-meet__track {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(10.5rem, 42vw), 1fr));
+  gap: 2.75rem 1.25rem;
+  max-width: 110rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@media (min-width: 640px) {
+  .home-meet__track {
+    gap: 3.5rem 2rem;
+  }
+}
+
+.home-meet__floor {
+  display: none;
+}
+
+.home-meet__teddy {
+  position: absolute;
+  top: clamp(-9.5rem, -20vw, -6rem);
+  right: var(--gutter);
+  width: clamp(8rem, 26vw, 11rem);
+}
+
+/* --- Pinned layout (set by MeetScroller) --- */
+
+.home-meet__range[data-pinned] .home-meet__stage {
+  position: sticky;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  padding-top: calc(var(--header-h) + clamp(1rem, 3vh, 2.5rem));
+  padding-bottom: 0;
+  overflow: hidden;
+}
+
+.home-meet__range[data-pinned] .home-meet__hall {
+  flex: 1;
+}
+
+/* One long row; MeetScroller moves it with translateX. The big left padding starts the first door near Teddy. */
+.home-meet__range[data-pinned] .home-meet__track {
+  position: absolute;
+  left: 0;
+  bottom: var(--floor-h);
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(4.5rem, 6vw, 7rem);
+  width: max-content;
+  max-width: none;
+  padding-inline: 38vw 12vw;
+  will-change: transform;
+}
+
+.home-meet__range[data-pinned] .home-door {
+  width: var(--door-w, clamp(8rem, min(15vw, 24vh), 16rem));
+}
+
+/* Long names must not make the row ragged: clamp them to a fixed number of lines. */
+.home-meet__range[data-pinned] :is(.home-door__name, .home-door__meta) {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.home-meet__range[data-pinned] .home-door__name {
+  -webkit-line-clamp: 3;
+}
+
+/* Wooden floor the doors stand on; the plank lines slide with the doors (--floor-x). */
+.home-meet__range[data-pinned] .home-meet__floor {
+  position: absolute;
+  inset: auto 0 0;
+  display: block;
+  height: var(--floor-h);
+  border-top: 3px solid var(--color-cocoa);
+  background:
+    linear-gradient(to bottom, rgb(42 23 14 / 0.16), transparent 22%),
+    repeating-linear-gradient(90deg, transparent 0 calc(11rem - 2px), rgb(42 23 14 / 0.12) calc(11rem - 2px) 11rem)
+      var(--floor-x, 0) 0 / auto,
+    linear-gradient(#e8b06a, #dc9a52);
+  box-shadow: 0 -12px 0 -6px #f5d9a8;
+}
+
+.home-meet__range[data-pinned] .home-meet__teddy {
+  top: auto;
+  right: auto;
+  left: 14vw;
+  bottom: calc(var(--floor-h) * 0.42);
+  width: clamp(11rem, min(14vw, 24vh), 14rem);
+}
+
+/* --- A door --- */
+
+.home-door {
+  position: relative;
+  list-style: none;
+}
+
+.home-door__link {
+  display: block;
+  border-radius: 1rem;
+  text-decoration: none;
+}
+
+.home-door__plate {
+  display: block;
+  margin-bottom: 0.8rem;
+  text-align: center;
+}
+
+.home-door__name {
+  display: block;
+  font-size: clamp(1.45rem, 2vw, 2rem);
+  line-height: 1;
+}
+
+.home-door__meta {
+  display: block;
+  margin-top: 0.35rem;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* The frame is the dark doorway; the room (photo) and the leaf (the door itself) fill it. */
+.home-door__frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5.2;
+  border: 3px solid var(--color-cocoa);
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+  background: var(--color-door-frame);
+}
+
+/* A little shelf under each door when they stand in a grid (the pinned row has a floor instead). */
+.home-door__frame::after {
+  content: "";
+  position: absolute;
+  left: -0.55rem;
+  right: -0.55rem;
+  bottom: -0.6rem;
+  height: 0.6rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 0.35rem;
+  background: #dc9a52;
+}
+
+.home-meet__range[data-pinned] .home-door__frame::after {
+  display: none;
+}
+
+/* Perspective is what makes the leaf look like it swings towards you; the origin is the left hinge. */
+.home-door__way {
+  --door-open: 78deg;
+  position: absolute;
+  inset: -3px -3px 0;
+  overflow: hidden;
+  border-radius: 999px 999px 0 0;
+  perspective: 700px;
+  perspective-origin: 0;
+}
+
+.home-door__room {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.home-door__room img {
+  transition: scale 0.45s var(--ease-silk);
+}
+
+.home-door__leaf {
+  position: absolute;
+  inset: 0;
+  border: 3px solid var(--color-cocoa);
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+  /* Four plank lines over the door colour. */
+  background:
+    repeating-linear-gradient(90deg, transparent 0 calc(25% - 1.5px), rgb(42 23 14 / 0.18) calc(25% - 1.5px) 25%),
+    var(--door);
+  transform-origin: 0;
+  /* Default (no scroll animation support, reduced motion): open, so the photo is always visible. */
+  transform: rotateY(var(--door-open));
+  transition: transform 1.05s cubic-bezier(0.3, 1.32, 0.48, 1) 50ms; /* overshoots like a real swing */
+}
+
+/* Raised panel outline on the door. */
+.home-door__leaf::before {
+  content: "";
+  position: absolute;
+  inset: 12% 14% 9%;
+  border: 2.5px solid rgb(255 253 248 / 0.28);
+  border-radius: 999px 999px 0.5rem 0.5rem;
+}
+
+.home-door__peephole {
+  position: absolute;
+  top: 19%;
+  left: 50%;
+  translate: -50%;
+  width: 22%;
+  color: rgb(255 253 248 / 0.45);
+}
+
+.home-door__knob {
+  position: absolute;
+  top: 56%;
+  right: 11%;
+  width: 0.85rem;
+  aspect-ratio: 1;
+  border: 2.5px solid var(--color-cocoa);
+  border-radius: 50%;
+  background: var(--color-honey);
+}
+
+/* Non-pinned: the door swings open while it scrolls through the middle of the screen. */
+@supports (animation-timeline: view()) {
+  .home-door__leaf {
+    animation: home-door-open linear both;
+    animation-timeline: view();
+    animation-range: entry 55% cover 48%;
+  }
+}
+
+@keyframes home-door-open {
+  0% {
+    transform: rotateY(0);
+  }
+  100% {
+    transform: rotateY(var(--door-open));
+  }
+}
+
+/* Pinned: closed until MeetScroller marks the door as passed (data-open) or the visitor hovers it. */
+.home-meet__range[data-pinned] .home-door__leaf {
+  animation: none;
+  transform: rotateY(0);
+}
+
+.home-meet__range[data-pinned] .home-door[data-open="true"] .home-door__leaf,
+.home-door__link:is(:hover, :focus-visible) .home-door__leaf {
+  transform: rotateY(var(--door-open));
+}
+
+.home-meet__range[data-pinned] .home-door[data-open="true"] .home-door__room img {
+  scale: 1.04;
+}
+
+.home-door__link:is(:hover, :focus-visible) .home-door__name {
+  color: var(--color-toffee-deep);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-door__leaf {
+    animation: none !important;
+    transform: rotateY(var(--door-open)) !important;
+  }
+}
+
+/* The last "door": an empty dashed arch linking to every puppy. */
+.home-door--all {
+  display: flex;
+  align-items: flex-end;
+  align-self: stretch;
+}
+
+.home-door--all .home-door__link {
+  width: 100%;
+}
+
+.home-door__frame--all {
+  display: grid;
+  place-items: center;
+  border-style: dashed;
+  background: transparent;
+}
+
+.home-door__all {
+  padding: 1rem;
+  font-size: clamp(1.6rem, 2.4vw, 2.4rem);
+  line-height: 1;
+  text-align: center;
+  text-decoration: underline;
+  text-decoration-color: var(--color-toffee);
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+}
+
+/* ======================================================================
+   3. Two ways to meet your puppy (signpost)
+   ====================================================================== */
+
+.home-paths {
+  padding-block: clamp(4.5rem, 11vh, 8rem) clamp(3rem, 8vh, 6rem);
+}
+
+.home-paths__title {
+  max-width: 13ch;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.home-fork {
+  --fork-gap: clamp(9rem, 16vw, 15rem); /* space between the two ways (the signpost stands in it) */
+  position: relative;
+  display: grid;
+  gap: 2.5rem;
+  margin-top: clamp(2.5rem, 6vh, 4.5rem);
+}
+
+/* Phones: left way, Teddy, right way, one under the other. */
+.home-way {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.home-way--left {
+  order: 1;
+}
+
+.home-fork__teddy {
+  order: 2;
+  justify-self: center;
+  width: clamp(9rem, 40vw, 12rem);
+}
+
+.home-way--right {
+  order: 3;
+}
+
+.home-fork__post {
+  display: none;
+}
+
+/* Wooden arrow sign: a plank plus a rotated square for the pointed end. */
+.home-sign {
+  --wood: linear-gradient(#e4a85b, #d38f45);
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  height: 4.2rem;
+  padding: 0 1.4rem;
+  border: 3px solid var(--color-cocoa);
+  background:
+    repeating-linear-gradient(0deg, transparent 0 9px, rgb(42 23 14 / 0.09) 9px 10px),
+    var(--wood);
+  color: var(--color-cocoa);
+  font-size: clamp(1.5rem, 2.4vw, 2.35rem);
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 7px 0 -3px rgb(42 23 14 / 0.25);
+}
+
+.home-sign::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  z-index: -1;
+  width: 2.95rem;
+  height: 2.95rem;
+  border: 3px solid var(--color-cocoa);
+  background:
+    repeating-linear-gradient(-45deg, transparent 0 9px, rgb(42 23 14 / 0.09) 9px 10px),
+    var(--wood);
+}
+
+.home-sign--left {
+  margin-left: 1.5rem;
+  padding-left: 0.6rem;
+  border-left: 0;
+  rotate: -2deg;
+}
+
+.home-sign--left::after {
+  left: -1.47rem;
+  border-top: 0;
+  border-right: 0;
+  translate: 0 -50%;
+  rotate: 45deg;
+}
+
+.home-sign--right {
+  padding-right: 0.6rem;
+  border-right: 0;
+  rotate: 1.5deg;
+}
+
+.home-sign--right::after {
+  right: -1.47rem;
+  border-bottom: 0;
+  border-left: 0;
+  translate: 0 -50%;
+  rotate: 45deg;
+}
+
+.home-way__scene {
+  position: relative;
+  width: 100%;
+  height: clamp(13rem, 22vw, 19rem);
+  margin-top: 1.75rem;
+}
+
+.home-way__skyline {
+  position: absolute;
+  inset: auto 0 0;
+  width: 100%;
+  color: color-mix(in oklab, var(--ink) 30%, transparent);
+}
+
+/* Shop window: striped awning over a glass panel with a photo in it. */
+.home-window {
+  position: absolute;
+  bottom: 0;
+  left: 32%;
+  translate: -50%;
+  width: clamp(8.5rem, 13vw, 12rem);
+  text-align: center;
+}
+
+.home-window::before {
+  content: "";
+  position: relative;
+  z-index: 1;
+  display: block;
+  height: 1.6rem;
+  margin: 0 -0.8rem -0.2rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 0.5rem 0.5rem 0.3rem 0.3rem;
+  background: repeating-linear-gradient(90deg, var(--color-toffee) 0 1.05rem, var(--color-milk) 1.05rem 2.1rem);
+}
+
+.home-window__glass {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 4.6;
+  overflow: hidden;
+  border: 3px solid var(--color-cocoa);
+  border-top: 0;
+  border-radius: 0 0 0.6rem 0.6rem;
+  background: var(--color-honey-soft);
+  box-shadow: inset 0 0 0 5px var(--color-milk);
+}
+
+.home-window figcaption {
+  margin-top: 0.4rem;
+  font-size: 0.95rem;
+}
+
+.home-way__text {
+  max-width: 40ch;
+  margin-top: 1.5rem;
+  color: var(--ink-soft);
+}
+
+.home-way .btn {
+  margin-top: 1.25rem;
+}
+
+/* --- Flight path illustration --- */
+
+.home-flight {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+@media (max-width: 639px) {
+  .home-flight {
+    width: 86%;
+  }
+}
+
+.home-flight__route {
+  fill: none;
+  stroke: var(--color-toffee-deep);
+  stroke-width: 3px;
+  stroke-dasharray: 3 11;
+  stroke-linecap: round;
+}
+
+.home-flight__dot {
+  fill: var(--color-toffee-deep);
+}
+
+.home-flight__label {
+  fill: var(--ink-soft);
+  font-family: var(--font-hand);
+  font-size: 19px;
+}
+
+.home-flight__plane {
+  animation: home-plane-bob 3.4s ease-in-out infinite;
+}
+
+@keyframes home-plane-bob {
+  50% {
+    translate: 0 -6px;
+    rotate: -3deg;
+  }
+}
+
+.home-flight__body {
+  fill: var(--color-milk);
+  stroke: var(--color-cocoa);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+.home-flight__wing {
+  fill: var(--color-toffee);
+  stroke: var(--color-cocoa);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+.home-flight__wing--far {
+  fill: var(--color-toffee-deep);
+}
+
+.home-flight__line {
+  fill: none;
+  stroke: var(--color-cocoa);
+  stroke-width: 3.5px;
+  stroke-linecap: round;
+}
+
+.home-flight__porthole {
+  fill: none;
+  stroke: var(--color-cocoa);
+  stroke-width: 4px;
+}
+
+/* Desktop: two columns with the signpost between them and Teddy at its foot. */
+@media (min-width: 1024px) {
+  .home-fork {
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--fork-gap);
+    padding-bottom: 8.5rem;
+  }
+
+  .home-way--left {
+    order: 0;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .home-way--right {
+    order: 0;
+  }
+
+  /* The signs reach into the gap so their tips meet the post. */
+  .home-sign--left {
+    margin-left: 0;
+    margin-right: calc(var(--fork-gap) / -2 + 0.4rem);
+  }
+
+  .home-sign--right {
+    margin-left: calc(var(--fork-gap) / -2 + 0.4rem);
+  }
+
+  .home-fork__post {
+    position: absolute;
+    top: -2.2rem;
+    bottom: 2.6rem;
+    left: 50%;
+    translate: -50%;
+    display: block;
+    width: 1.5rem;
+    border: 3px solid var(--color-cocoa);
+    border-radius: 0.6rem 0.6rem 0.2rem 0.2rem;
+    background:
+      repeating-linear-gradient(90deg, transparent 0 5px, rgb(42 23 14 / 0.12) 5px 6px),
+      linear-gradient(90deg, #d38f45, #b8742f);
+  }
+
+  .home-fork__teddy {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    translate: -46%;
+    width: clamp(11rem, 13vw, 13.5rem);
+  }
+}
+
+/* ======================================================================
+   4. Your puppy journey (chat on a phone)
+   JourneyTracker writes data-step on the grid and data-state on each step.
+   ====================================================================== */
+
+.home-journey {
+  padding-block: clamp(4.5rem, 10vh, 7rem) clamp(4rem, 9vh, 6rem);
+}
+
+.home-journey__grid {
+  display: grid;
+  gap: 3.5rem;
+  max-width: 110rem;
+  margin-inline: auto;
+}
+
+.home-journey__steps {
+  display: grid;
+  gap: 1.75rem;
+  margin-top: 2.5rem;
+}
+
+.home-step {
+  display: grid;
+  grid-template-columns: 3.4rem 1fr;
+  align-content: start;
+  column-gap: 1.1rem;
+}
+
+.home-step__num {
+  display: grid;
+  grid-row: span 2;
+  place-items: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 50%;
+  background: var(--color-milk);
+  color: var(--color-cocoa);
+  font-size: 1.75rem;
+  transition:
+    background-color 0.4s,
+    color 0.4s,
+    scale 0.5s var(--ease-pounce);
+}
+
+.home-step__title {
+  font-size: clamp(1.6rem, 2.3vw, 2.3rem);
+  line-height: 1.05;
+}
+
+.home-step__text {
+  max-width: 40ch;
+  margin-top: 0.45rem;
+  color: var(--ink-soft);
+}
+
+.home-step[data-state="active"] .home-step__num {
+  scale: 1.1;
+  background: var(--color-toffee-deep);
+  color: var(--color-milk);
+}
+
+.home-journey__side {
+  position: relative;
+  padding-bottom: clamp(5.5rem, 22vw, 7rem);
+}
+
+.home-journey__teddy {
+  position: absolute;
+  bottom: -0.6rem;
+  left: max(0rem, 50% - 12rem);
+  width: clamp(7.5rem, 26vw, 9rem);
+}
+
+/* --- Phone --- */
+
+.home-phone {
+  position: relative;
+  width: min(100%, 23rem);
+  margin-inline: auto;
+  padding: 0.55rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 2.7rem;
+  background: var(--color-cocoa);
+  rotate: 1.5deg;
+  box-shadow: 12px 16px rgb(42 23 14 / 0.16);
+}
+
+.home-phone__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 2.1rem 2.1rem 0.5rem 0.5rem;
+  background: var(--color-milk);
+  color: var(--color-cocoa);
+}
+
+.home-phone__avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+}
+
+.home-phone__name {
+  display: block;
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.home-phone__status {
+  display: block;
+  color: var(--color-cocoa-soft);
+  font-size: 0.78rem;
+}
+
+/* Chat background: a faint toffee paw pattern. Messages stack from the bottom, like a real chat. */
+.home-phone__screen {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  height: clamp(23rem, 54vh, 32rem);
+  margin-top: 0.3rem;
+  padding: 0.9rem 0.65rem;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' width='46' height='46'%3E%3Cpath fill='%23c2622b' fill-opacity='.09' transform='rotate(-20 32 32)' d='M32 30.5c-7.6 0-15.6 8.3-15.6 15.5 0 5.4 4.2 8.3 9.2 8.3 2.6 0 4.5-1.1 6.4-1.1s3.8 1.1 6.4 1.1c5 0 9.2-2.9 9.2-8.3 0-7.2-8-15.5-15.6-15.5zM14.6 22.3c-3 .1-5.6 3.3-5.6 7s2.6 6.9 5.6 6.9 5.6-3.2 5.6-6.9-2.6-7-5.6-7zM24.2 9.3c-3 0-5.6 3.3-5.6 7.3s2.5 7.3 5.6 7.3 5.6-3.3 5.6-7.3-2.5-7.3-5.6-7.3zM39.8 9.3c-3.1 0-5.6 3.3-5.6 7.3s2.5 7.3 5.6 7.3 5.6-3.3 5.6-7.3-2.5-7.3-5.6-7.3zM49.4 22.3c-3 0-5.6 3.3-5.6 7s2.6 6.9 5.6 6.9 5.6-3.2 5.6-6.9-2.6-7-5.6-7z'/%3E%3C/svg%3E")
+      0 0 / 46px 46px,
+    #fbecd2;
+}
+
+.home-msg {
+  max-width: 86%;
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--color-cocoa);
+  border-radius: 1.05rem;
+  color: var(--color-cocoa);
+  font-size: 0.88rem;
+  line-height: 1.38;
+}
+
+.home-msg--me {
+  align-self: flex-end;
+  border-bottom-right-radius: 0.25rem;
+  background: var(--color-honey);
+}
+
+.home-msg--them {
+  align-self: flex-start;
+  border-bottom-left-radius: 0.25rem;
+  background: var(--color-milk);
+}
+
+.home-msg--media {
+  padding: 0.3rem;
+}
+
+/* A group of replies to one step. */
+.home-msgs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+/* Replies only show once their step has been reached (desktop; JourneyTracker sets 3 on phones). */
+.home-journey__grid[data-step="0"] .home-msgs,
+.home-journey__grid[data-step="1"] .home-msgs:is([data-reply="2"], [data-reply="3"]),
+.home-journey__grid[data-step="2"] .home-msgs[data-reply="3"] {
+  display: none;
+}
+
+/* Each reply pops in after a short "typing" pause. */
+.home-msgs > :not(.home-typing) {
+  animation: home-msg-in 0.5s var(--ease-pounce) 0.75s both;
+}
+
+.home-msgs > :nth-child(3) {
+  animation-delay: 0.93s;
+}
+
+.home-msgs > :nth-child(4) {
+  animation-delay: 1.11s;
+}
+
+@keyframes home-msg-in {
+  0% {
+    opacity: 0;
+    translate: 0 0.8rem;
+    scale: 0.92;
+  }
+}
+
+.home-typing {
+  display: inline-flex;
+  align-self: flex-start;
+  gap: 0.3rem;
+  padding: 0.7rem 0.85rem;
+  border: 2px solid var(--color-cocoa);
+  border-radius: 1.05rem 1.05rem 1.05rem 0.25rem;
+  background: var(--color-milk);
+  /* After 0.75s the bubble shrinks to nothing (animating `display` is not reliable everywhere). */
+  animation: home-typing-out 0.01s 0.75s forwards;
+}
+
+@keyframes home-typing-out {
+  100% {
+    height: 0;
+    margin: 0 0 -0.45rem;
+    padding: 0;
+    border-width: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+}
+
+.home-typing span {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--color-cocoa);
+  animation: home-dot 0.9s ease-in-out infinite;
+}
+
+.home-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.home-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes home-dot {
+  0%,
+  60%,
+  100% {
+    translate: 0;
+  }
+  30% {
+    translate: 0 -0.35rem;
+  }
+}
+
+/* With every step visible (phones) there is nothing to wait for. */
+@media (max-width: 1023px) {
+  .home-typing {
+    display: none;
+  }
+
+  .home-msgs > * {
+    animation: none;
+  }
+}
+
+.home-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+}
+
+.home-chips a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.9rem;
+  padding: 0 0.6rem;
+  border: 1.5px solid var(--color-cocoa);
+  border-radius: 999px;
+  background: var(--color-honey-soft);
+  font-size: 0.8rem;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.home-chips a:hover {
+  background: var(--color-honey);
+}
+
+.home-snaps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem;
+  width: 11.5rem;
+}
+
+.home-snaps__one {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 0.65rem;
+}
+
+.home-clip {
+  position: relative;
+  width: 9rem;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: 0.8rem;
+  background: var(--color-cocoa);
+}
+
+.home-clip__play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border: 2px solid var(--color-cocoa);
+  border-radius: 50%;
+  background: rgb(255 253 248 / 0.92);
+}
+
+.home-clip__play svg {
+  width: 1.3rem;
+  fill: var(--color-cocoa);
+}
+
+/* Dotted route to a little house, drawn inside the last reply. */
+.home-route {
+  display: block;
+  width: 100%;
+  margin-top: 0.4rem;
+}
+
+.home-route__line {
+  fill: none;
+  stroke: var(--color-toffee-deep);
+  stroke-width: 2.5px;
+  stroke-dasharray: 2 7;
+  stroke-linecap: round;
+}
+
+.home-route__dot {
+  fill: var(--color-toffee-deep);
+}
+
+.home-route__home {
+  fill: var(--color-honey);
+  stroke: var(--color-cocoa);
+  stroke-width: 2.5px;
+  stroke-linejoin: round;
+}
+
+.home-route__heart {
+  fill: var(--color-toffee-deep);
+}
+
+.home-route__paw {
+  fill: var(--color-toffee);
+  opacity: 0.6;
+}
+
+.home-phone__compose {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+  padding: 0.45rem 0.45rem 0.45rem 1rem;
+  border-radius: 0.5rem 0.5rem 2.1rem 2.1rem;
+  background: var(--color-milk);
+  color: var(--color-cocoa-soft);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.home-phone__compose:hover {
+  color: var(--color-cocoa);
+}
+
+.home-phone__compose svg {
+  flex: none;
+  width: 2.4rem;
+  height: 2.4rem;
+  padding: 0.55rem;
+  border-radius: 50%;
+  background: var(--color-whatsapp);
+  fill: #fff;
+}
+
+@media (min-width: 1024px) {
+  .home-journey__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 30rem);
+    column-gap: clamp(3rem, 8vw, 9rem);
+  }
+
+  .home-journey__steps {
+    gap: 0;
+  }
+
+  /* Tall steps give the reader time to scroll through them; steps not reached yet are faded. */
+  .home-step {
+    min-height: 44vh;
+    transition: opacity 0.5s;
+  }
+
+  .home-step:last-child {
+    min-height: 40vh;
+  }
+
+  .home-journey__grid[data-step] .home-step[data-state="idle"] {
+    opacity: 0.4;
+  }
+
+  /* The phone stays in view while the steps scroll past. */
+  .home-journey__side {
+    position: sticky;
+    top: calc(var(--header-h) + 5vh);
+    align-self: start;
+    padding-bottom: 0;
+  }
+
+  .home-journey__teddy {
+    bottom: -1.6rem;
+    left: -8.5rem;
+    width: 11rem;
+  }
+}
+
+/* ======================================================================
+   5. Why families trust TeddyPups (passport book)
+   ====================================================================== */
+
+.home-passport {
+  padding-top: clamp(4rem, 9vh, 6.5rem);
+}
+
+.home-book {
+  position: relative;
+  display: grid;
+  max-width: 72rem;
+  margin: 0 0.6rem clamp(3.5rem, 8vh, 6rem);
+  rotate: -0.35deg;
+  filter: drop-shadow(10px 14px rgb(42 23 14 / 0.18));
+}
+
+/* The book's leather cover, peeking out around the two pages. */
+.home-book::before {
+  content: "";
+  position: absolute;
+  inset: -0.85rem -0.95rem;
+  z-index: -1;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 1.7rem;
+  background:
+    radial-gradient(circle at 30% 20%, rgb(255 255 255 / 0.12), transparent 60%),
+    var(--color-toffee-deep);
+}
+
+.home-book__page {
+  position: relative;
+  padding: clamp(1.6rem, 4vw, 3.2rem);
+  border: 3px solid var(--color-cocoa);
+  color: var(--color-cocoa);
+  /* Paper with a faint scallop pattern. */
+  background:
+    radial-gradient(circle at 0 0, transparent 0 17px, rgb(194 98 43 / 0.08) 17px 18.5px, transparent 18.5px) 0 0 /
+      36px 36px,
+    radial-gradient(circle at 18px 18px, transparent 0 17px, rgb(194 98 43 / 0.06) 17px 18.5px, transparent 18.5px) 0 0 /
+      36px 36px,
+    var(--color-paper);
+}
+
+/* Phones: pages stacked, the spine is the line between them. */
+.home-book__page--left {
+  padding-bottom: clamp(9rem, 22vw, 11rem);
+  border-bottom-width: 1.5px;
+  border-radius: 1.1rem 1.1rem 0 0;
+}
+
+.home-book__page--right {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  align-content: center;
+  gap: 2rem 1.5rem;
+  border-top-width: 1.5px;
+  border-radius: 0 0 1.1rem 1.1rem;
+}
+
+.home-book__kicker {
+  color: var(--color-toffee-ink);
+  font-size: 1.15rem;
+}
+
+.home-book__title {
+  max-width: 12ch;
+  margin-top: 0.4rem;
+  font-size: clamp(2.2rem, 4.2vw, 3.9rem);
+}
+
+.home-book__teddy {
+  position: absolute;
+  right: clamp(0.5rem, 4vw, 2rem);
+  bottom: -0.4rem;
+  width: clamp(8.5rem, 26vw, 11rem);
+}
+
+.home-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.home-entry__text {
+  max-width: 26ch;
+  margin-top: 0.85rem;
+  color: var(--color-cocoa-soft);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+/* Rubber stamp: ink-coloured outline, dashed inner ring and a speckle mask so the ink looks uneven. */
+.home-stamp {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: clamp(8.5rem, 12vw, 10.5rem);
+  aspect-ratio: 1;
+  padding: 0.8rem;
+  border: 3px solid;
+  color: var(--ink-stamp);
+  rotate: var(--tilt);
+  opacity: 0.9;
+  mix-blend-mode: multiply; /* ink soaks into the paper pattern */
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.4 2.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")
+    0 0 / 160px 160px;
+}
+
+.home-stamp::after {
+  content: "";
+  position: absolute;
+  inset: 5px;
+  border: 1.5px dashed;
+  border-radius: inherit;
+}
+
+.home-stamp--round,
+.home-stamp--scallop {
+  border-radius: 50%;
+}
+
+.home-stamp--ticket {
+  aspect-ratio: 1.3;
+  border-radius: 0.7rem;
+}
+
+.home-stamp--oval {
+  aspect-ratio: 1.35;
+  border-radius: 50%;
+}
+
+.home-stamp--scallop {
+  border-style: dotted;
+  border-width: 5px;
+}
+
+.home-stamp__icon {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.home-stamp__title {
+  max-width: 10ch;
+  font-size: 1.08rem;
+  line-height: 1.05;
+}
+
+/* Each stamp thumps onto the page while the book scrolls into view, one after another (--i). */
+@supports (animation-timeline: view()) {
+  .home-stamp {
+    animation: home-stamp-in linear both;
+    animation-timeline: view();
+    animation-range: entry calc(55% + var(--i) * 9%) cover calc(42% + var(--i) * 6%);
+  }
+}
+
+@keyframes home-stamp-in {
+  0% {
+    opacity: 0;
+    scale: 1.7;
+    rotate: calc(var(--tilt) - 16deg);
+  }
+  55% {
+    opacity: 0.95;
+    scale: 0.93;
+  }
+  75% {
+    scale: 1.03;
+  }
+  100% {
+    opacity: 0.9;
+    scale: 1;
+    rotate: var(--tilt);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-stamp {
+    animation: none !important;
+  }
+}
+
+/* Two pages side by side. */
+@media (min-width: 900px) {
+  .home-book {
+    grid-template-columns: 1fr 1.3fr;
+    margin-inline: auto;
+    rotate: -1.2deg;
+  }
+
+  .home-book__page--left {
+    padding-bottom: clamp(1.6rem, 4vw, 3.2rem);
+    border-right-width: 1.5px;
+    border-bottom-width: 3px;
+    border-radius: 1.1rem 0 0 1.1rem;
+    box-shadow: inset -26px 0 30px -24px rgb(42 23 14 / 0.35); /* shading into the spine */
+  }
+
+  .home-book__page--right {
+    grid-template-columns: 1fr 1fr;
+    border-top-width: 3px;
+    border-left-width: 1.5px;
+    border-radius: 0 1.1rem 1.1rem 0;
+    box-shadow: inset 26px 0 30px -24px rgb(42 23 14 / 0.3);
+  }
+
+  .home-book__teddy {
+    right: -1.5rem;
+    bottom: 0.5rem;
+    width: clamp(10rem, 13vw, 12.5rem);
+  }
+}
+
+/* --- Horizon: skyline and a setting sun between the passport and dusk scenes --- */
+
+.home-horizon {
+  position: relative;
+  height: clamp(5rem, 12vw, 10rem);
+  margin-top: -1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.home-horizon__sun {
+  position: absolute;
+  bottom: 18%;
+  left: 62%;
+  width: clamp(7rem, 16vw, 13rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, #ffd27f 0 70%, rgb(255 210 127 / 0.45) 73%, transparent 100%);
+}
+
+@supports (animation-timeline: view()) {
+  .home-horizon__sun {
+    animation: home-sun-set linear both;
+    animation-timeline: view();
+    animation-range: entry exit 30%;
+  }
+}
+
+@keyframes home-sun-set {
+  0% {
+    translate: 0 -60%;
+  }
+  100% {
+    translate: 0 40%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-horizon__sun {
+    animation: none !important;
+  }
+}
+
+.home-horizon__city {
+  position: absolute;
+  inset: auto 0 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--sky-bottom);
+}
+
+/* ======================================================================
+   6. Happy families & puppies (dusk): testimonial, photo wall, front door
+   ====================================================================== */
+
+.home-dusk {
+  padding-top: clamp(3rem, 7vh, 5rem);
+  overflow-x: clip;
+}
+
+.home-dusk__sky {
+  position: relative;
+  display: grid;
+  gap: 2.25rem;
+  max-width: 110rem;
+  margin-inline: auto;
+}
+
+/* Speech-bubble note with a tail (desktop). */
+.home-dusk__note {
+  position: relative;
+  max-width: 34rem;
+  padding: 1.3rem 1.5rem 1.2rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 1.8rem 1.8rem 1.8rem 0.35rem;
+  background: var(--color-milk);
+  color: var(--color-cocoa);
+  rotate: 1.2deg;
+  box-shadow: 7px 9px rgb(20 10 5 / 0.25);
+}
+
+.home-dusk__note blockquote {
+  font-size: clamp(1.02rem, 1.25vw, 1.2rem);
+  line-height: 1.5;
+}
+
+.home-dusk__note figcaption {
+  margin-top: 0.7rem;
+  color: var(--color-toffee-ink);
+}
+
+@media (min-width: 1024px) {
+  .home-dusk__sky {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 31rem);
+    align-items: end;
+  }
+
+  .home-dusk__note::after {
+    content: "";
+    position: absolute;
+    bottom: -1.05rem;
+    left: 2.2rem;
+    width: 1.6rem;
+    height: 1.6rem;
+    border: 3px solid var(--color-cocoa);
+    border-top: 0;
+    border-left: 0;
+    background: var(--color-milk);
+    rotate: 45deg;
+  }
+}
+
+/* --- Photo wall --- */
+
+.home-wall {
+  margin-top: clamp(3rem, 7vh, 4.5rem);
+}
+
+.home-wall__board {
+  position: relative;
+  max-width: 104rem;
+  margin-inline: clamp(0.75rem, 3vw, 3rem);
+  padding: clamp(2.2rem, 4vw, 3.2rem) clamp(1rem, 3vw, 2.75rem) 0;
+  border: 3px solid var(--color-cocoa);
+  border-bottom: 0;
+  border-radius: 1rem 1rem 0 0;
+  /* Lamp glow bottom-left over horizontal boards on warm wood. */
+  background:
+    radial-gradient(55% 45% at 12% 100%, rgb(255 205 110 / 0.28), transparent 70%),
+    repeating-linear-gradient(0deg, transparent 0 46px, rgb(42 23 14 / 0.12) 46px 48px),
+    linear-gradient(#80482a, #6c3b22);
+}
+
+@media (min-width: 1680px) {
+  .home-wall__board {
+    margin-inline: auto;
+  }
+}
+
+/* The shelf the prints hang under. */
+.home-wall__board::before {
+  content: "";
+  position: absolute;
+  inset: -1.15rem -0.9rem auto;
+  height: 1.7rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 0.55rem;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 18px, rgb(42 23 14 / 0.35) 18px 21px) 0 100% / 100% 0.55rem no-repeat,
+    #5a301b;
+}
+
+.home-wall__prints {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 2rem 1.1rem;
+}
+
+/* Phones and tablets show six prints; the 4-column wall shows eight. */
+.home-wall__prints > li:nth-child(n + 7) {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .home-wall__prints {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.4rem 1.6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .home-wall__prints {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2.6rem clamp(1.4rem, 2.6vw, 2.8rem);
+  }
+
+  .home-wall__prints > li:nth-child(n + 7) {
+    display: block;
+  }
+
+  /* Stagger the middle columns so the prints do not form a stiff grid. */
+  .home-wall__prints > li:nth-child(4n + 2),
+  .home-wall__prints > li:nth-child(4n + 3) {
+    margin-top: 1.4rem;
+  }
+}
+
+.home-wall__print {
+  display: block;
+  width: 100%;
+}
+
+.home-polaroid {
+  position: relative;
+  display: block;
+  padding: 0.6rem 0.6rem 0;
+  border-radius: 0.2rem;
+  background: var(--color-polaroid);
+  rotate: var(--tilt);
+  box-shadow:
+    0 1px 1px rgb(42 23 14 / 0.12),
+    0 10px 20px -8px rgb(42 23 14 / 0.36);
+  transition:
+    opacity 0.45s ease var(--d),
+    translate 0.75s var(--ease-pounce) var(--d),
+    rotate 0.75s var(--ease-pounce) var(--d),
+    box-shadow 0.4s var(--ease-silk);
+}
+
+.home-polaroid__photo {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 4.6;
+  overflow: hidden;
+  border-radius: 1px;
+  background: #e8dfd3;
+  box-shadow: inset 0 0 0 1px rgb(42 23 14 / 0.08);
+}
+
+.home-polaroid__caption {
+  display: block;
+  min-height: 2.6rem;
+  padding: 0.55rem 0.2rem 0.6rem;
+  color: var(--color-cocoa-soft);
+  font-size: 0.92rem;
+  line-height: 1.2;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* Hover: the print straightens and lifts a little. */
+.home-wall__print:is(:hover, :focus-visible) .home-polaroid {
+  translate: 0 -5px;
+  rotate: 0deg;
+  transition-delay: 0s;
+}
+
+/* Strip of translucent tape; --tape is set per print. */
+.home-tape {
+  position: absolute;
+  z-index: 2;
+  width: clamp(4rem, 34%, 6.2rem);
+  height: 1.35rem;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 3px, rgb(255 255 255 / 0.14) 3px 5px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.28), transparent 30%, rgb(255 255 255 / 0.18) 70%, transparent),
+    color-mix(in oklab, var(--tape, #f6d79a) 78%, transparent);
+  opacity: 0.88;
+  /* Torn, slightly uneven ends. */
+  clip-path: polygon(0 10%, 3% 0, 50% 4%, 97% 0, 100% 14%, 98% 40%, 100% 66%, 97% 100%, 50% 96%, 3% 100%, 0 86%, 2% 52%);
+  pointer-events: none;
+  transition:
+    scale 0.35s var(--ease-pounce) calc(var(--d) + 0.52s),
+    opacity 0.25s calc(var(--d) + 0.52s);
+}
+
+.home-tape--center {
+  top: -0.7rem;
+  left: 50%;
+  translate: -50%;
+  rotate: -3deg;
+}
+
+.home-tape--tl,
+.home-tape--tr {
+  top: 0.05rem;
+  width: clamp(3.2rem, 26%, 4.6rem);
+}
+
+.home-tape--tl {
+  left: -1rem;
+  rotate: -40deg;
+}
+
+.home-tape--tr {
+  right: -1rem;
+  rotate: 40deg;
+}
+
+/* Reveal (Reveal sets data-armed, then data-revealed): prints drop in from above, tape sticks on last. */
+.home-wall__prints > li[data-armed]:not([data-revealed]) .home-polaroid {
+  opacity: 0;
+  translate: 0 -2.6rem;
+  rotate: calc(var(--tilt) + 9deg);
+}
+
+.home-wall__prints > li[data-armed]:not([data-revealed]) .home-tape {
+  opacity: 0;
+  scale: 1.3 0.5;
+}
+
+/* --- Front door, lamp and pavement under the wall --- */
+
+.home-facade {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: clamp(10rem, 18vw, 13rem);
+  margin-top: 2.6rem;
+}
+
+.home-facade__door {
+  position: relative;
+  width: clamp(5.5rem, 8vw, 7.5rem);
+  height: clamp(8.5rem, 12vw, 11rem);
+  border: 3px solid var(--color-cocoa);
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+  /* Centre line = the two leaves of the door. */
+  background:
+    linear-gradient(
+      90deg,
+      transparent calc(50% - 1.5px),
+      rgb(42 23 14 / 0.4) calc(50% - 1.5px) calc(50% + 1.5px),
+      transparent calc(50% + 1.5px)
+    ),
+    var(--color-toffee-deep);
+  box-shadow:
+    0 0 0 6px #b2733f,
+    0 0 0 9px var(--color-cocoa);
+}
+
+.home-lamp {
+  position: absolute;
+  bottom: 0;
+  left: 9%;
+  width: 0.7rem;
+  height: clamp(9rem, 14vw, 12.5rem);
+  border: 2px solid var(--color-cocoa);
+  border-bottom: 0;
+  border-radius: 0.3rem 0.3rem 0 0;
+  background: var(--color-door-frame);
+}
+
+.home-lamp__light {
+  position: absolute;
+  top: -1.9rem;
+  left: 50%;
+  translate: -50%;
+  width: 2.4rem;
+  height: 2.1rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 0.6rem 0.6rem 1.1rem 1.1rem;
+  background: var(--color-sun);
+  box-shadow: 0 0 44px 20px rgb(255 205 110 / 0.45);
+}
+
+.home-facade__cta {
+  position: absolute;
+  right: clamp(0.5rem, 5vw, 5rem);
+  bottom: 1.6rem;
+}
+
+.home-dusk__teddy {
+  position: absolute;
+  bottom: -0.4rem;
+  left: calc(50% + clamp(3.5rem, 6vw, 5.5rem));
+  width: clamp(8rem, 11vw, 11rem);
+}
+
+.home-pavement {
+  height: clamp(1.6rem, 3vw, 2.4rem);
+  border-top: 3px solid var(--color-cocoa);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 calc(6rem - 2px), rgb(255 255 255 / 0.07) calc(6rem - 2px) 6rem),
+    #3a2114;
+}
+
+@media (max-width: 639px) {
+  .home-facade {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 1.2rem;
+    min-height: 0;
+    padding-top: 1rem;
+  }
+
+  .home-facade__cta {
+    position: static;
+    order: -1;
+  }
+
+  .home-lamp {
+    left: 6%;
+  }
+
+  .home-dusk__teddy {
+    right: 4%;
+    left: auto;
+  }
+}
+
+/* ======================================================================
+   7. Questions, answered (night)
+   ====================================================================== */
+
+.home-night {
+  position: relative;
+  padding-block: clamp(4.5rem, 10vh, 7rem);
+  overflow: hidden;
+}
+
+.home-night__stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.home-night__grid {
+  position: relative;
+  display: grid;
+  gap: 3rem;
+  max-width: 110rem;
+  margin-inline: auto;
+}
+
+.home-night__pup {
+  position: relative;
+  width: clamp(9.5rem, 30vw, 13rem);
+  margin-top: 2.25rem;
+}
+
+/* A question mark floating over Teddy's head. */
+.home-night__wonder {
+  position: absolute;
+  top: -2.4rem;
+  left: 58%;
+  color: var(--color-honey);
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  line-height: 1;
+  animation: home-float 3.4s ease-in-out infinite;
+}
+
+@keyframes home-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  50% {
+    transform: translateY(-8px) rotate(8deg);
+  }
+}
+
+.home-night__list {
+  display: grid;
+  gap: clamp(2rem, 4.5vh, 3.25rem);
+}
+
+.home-qa__q {
+  display: flex;
+  gap: 0.75rem;
+  font-size: clamp(1.4rem, 2vw, 1.95rem);
+  line-height: 1.12;
+}
+
+.home-qa__star {
+  flex: none;
+  width: 1.15rem;
+  margin-top: 0.3rem;
+  color: var(--color-honey);
+}
+
+.home-qa__a {
+  max-width: 58ch;
+  margin-top: 0.7rem;
+  padding-left: 1.9rem;
+  color: var(--ink-soft);
+}
+
+@media (min-width: 1024px) {
+  .home-night__grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: start;
+    column-gap: clamp(3rem, 7vw, 8rem);
+  }
+}
+
+/* ======================================================================
+   8. Ready to meet your new best friend (home, at last)
+   ====================================================================== */
+
+.home-finale {
+  padding-top: clamp(4.5rem, 10vh, 7rem);
+  text-align: center;
+}
+
+.home-finale__title {
+  max-width: 15ch;
+  margin-inline: auto;
+}
+
+.home-finale__lede {
+  max-width: 52ch;
+  margin: 1.2rem auto 0;
+  color: var(--ink-soft);
+  font-size: clamp(1.05rem, 1.3vw, 1.3rem);
+  line-height: 1.55;
+}
+
+.home-finale__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  padding-block: clamp(2rem, 4vh, 2.75rem) clamp(5rem, 11vh, 8rem);
+}
+
+/* The house: a wooden wall (::before) on a dark ground slab (::after), with a lit doorway in the middle. */
+.home-house {
+  position: relative;
+  width: min(100%, 44rem);
+  height: clamp(21rem, 46vh, 29rem);
+  margin: clamp(2.5rem, 6vh, 4rem) auto 0;
+}
+
+.home-house::before {
+  content: "";
+  position: absolute;
+  inset: 0 6% 2.2rem;
+  border: 3px solid var(--color-cocoa);
+  border-bottom: 0;
+  border-radius: 1.4rem 1.4rem 0 0;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 30px, rgb(0 0 0 / 0.14) 30px 32px),
+    linear-gradient(#5c3622, #4a2a19);
+}
+
+.home-house::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 2.4rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 0.6rem 0.6rem 0 0;
+  background: #3a2114;
+}
+
+.home-house__doorway {
+  position: absolute;
+  bottom: 2.2rem;
+  left: 50%;
+  translate: -50%;
+  z-index: 1;
+  width: clamp(8.5rem, 15vw, 11.5rem);
+  aspect-ratio: 1 / 1.62;
+  border: 3px solid var(--color-cocoa);
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+  box-shadow:
+    0 0 0 7px #b2733f,
+    0 0 0 10px var(--color-cocoa),
+    0 0 60px 18px rgb(255 205 120 / 0.35); /* warm light spilling out */
+  perspective: 1000px;
+}
+
+/* The lit room behind the door, with the waiting puppy. */
+.home-house__inside {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 70%, #ffe4a8, #e9a95a);
+}
+
+.home-house__door {
+  position: absolute;
+  inset: -3px -3px 0;
+  border: 3px solid var(--color-cocoa);
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+  background:
+    linear-gradient(
+      90deg,
+      transparent calc(50% - 1.5px),
+      rgb(42 23 14 / 0.35) calc(50% - 1.5px) calc(50% + 1.5px),
+      transparent calc(50% + 1.5px)
+    ),
+    var(--color-toffee-deep);
+  transform-origin: 0;
+  /* Without scroll-animation support the door simply stands open. */
+  transform: rotateY(-102deg);
+}
+
+/* The door swings open as the scene scrolls into view. */
+@supports (animation-timeline: view()) {
+  .home-house__door {
+    animation: home-house-open linear both;
+    animation-timeline: view();
+    animation-range: entry 80% cover 52%;
+  }
+}
+
+@keyframes home-house-open {
+  0% {
+    transform: rotateY(0);
+  }
+  100% {
+    transform: rotateY(-102deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-house__door {
+    animation: none !important;
+  }
+}
+
+.home-house__peep {
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  translate: -50%;
+  width: 34%;
+  aspect-ratio: 1;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 50%;
+  background: #ffd98f;
+}
+
+.home-house__knob {
+  position: absolute;
+  top: 58%;
+  right: 12%;
+  width: 0.9rem;
+  aspect-ratio: 1;
+  border: 2.5px solid var(--color-cocoa);
+  border-radius: 50%;
+  background: var(--color-honey);
+}
+
+.home-house__lamp {
+  position: absolute;
+  bottom: calc(2.2rem + clamp(8.5rem, 15vw, 11.5rem));
+  left: calc(50% + clamp(6.5rem, 11vw, 8.5rem));
+  width: 1.9rem;
+  height: 2.6rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 0.5rem 0.5rem 1rem 1rem;
+  background: var(--color-sun);
+  box-shadow: 0 0 46px 22px rgb(255 205 110 / 0.4);
+}
+
+/* Potted plant: three green blobs over a terracotta pot, cut to a pot shape. */
+.home-house__plant {
+  position: absolute;
+  bottom: 2.2rem;
+  width: clamp(3.4rem, 6vw, 4.6rem);
+  aspect-ratio: 1 / 1.5;
+  background:
+    radial-gradient(ellipse 34% 30% at 30% 30%, #5f8f4a 96%, transparent 100%),
+    radial-gradient(ellipse 34% 30% at 70% 26%, #6fa356 96%, transparent 100%),
+    radial-gradient(ellipse 30% 34% at 50% 14%, #7bb060 96%, transparent 100%),
+    linear-gradient(transparent 52%, var(--color-toffee) 52%);
+  clip-path: polygon(0 0, 100% 0, 100% 52%, 88% 100%, 12% 100%, 0 52%);
+}
+
+.home-house__plant--left {
+  left: calc(50% - clamp(9.5rem, 16vw, 12.5rem));
+}
+
+.home-house__plant--right {
+  right: calc(50% - clamp(9.5rem, 16vw, 12.5rem));
+}
+
+.home-house__mat {
+  position: absolute;
+  bottom: 0.25rem;
+  left: 50%;
+  translate: -50%;
+  z-index: 1;
+  width: clamp(10rem, 16vw, 13rem);
+  height: 1.9rem;
+  border: 3px solid var(--color-cocoa);
+  border-radius: 0.45rem;
+  background: repeating-linear-gradient(90deg, var(--color-honey) 0 0.6rem, #e7a957 0.6rem 1.2rem);
+  color: var(--color-cocoa);
+  font-size: 0.95rem;
+  line-height: 1.55rem;
+}
+
+.home-house__teddy {
+  position: absolute;
+  bottom: 0.4rem;
+  left: calc(50% - clamp(15rem, 24vw, 19rem));
+  z-index: 1;
+  width: clamp(8.5rem, 13vw, 11.5rem);
+}
+
+@media (max-width: 639px) {
+  .home-house__teddy {
+    left: 0;
+    width: 7.25rem;
+  }
+
+  .home-house__plant--left {
+    display: none;
+  }
+}
