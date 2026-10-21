@@ -1,0 +1,466 @@
+/*
+ * Styles for the site shell: header, mobile menu, footer, basket and shared animations.
+ *
+ * Static layout lives in Tailwind classes inside the components. This file holds what
+ * utilities can't express well: data-attribute states, pseudo-elements, keyframes, clip-paths.
+ * Class names are BEM-like: block__element, block--modifier.
+ */
+
+/* =========================================================================
+   Header (components/layout/SiteHeader.tsx)
+
+   States are plain data attributes, written by the scroll handler:
+     data-home="true"      we are on "/" (transparent while at the top)
+     data-scrolled="true"  page scrolled more than 8px (milk background + hem fade in)
+     data-hidden="true"    scrolling down past 220px (slides out of view)
+   ========================================================================= */
+
+.site-header {
+  transition: transform 0.5s var(--ease-silk);
+}
+
+.site-header[data-hidden="true"] {
+  transform: translateY(-120%);
+}
+
+/* Milk background: invisible on the home page until scrolled, always on elsewhere. */
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--color-milk);
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+
+/* Scalloped hem hanging under the header (an SVG, see SiteHeader.tsx). */
+.site-header__hem {
+  position: absolute;
+  top: calc(100% - 1px);
+  left: 0;
+  display: block;
+  opacity: 0;
+  filter: drop-shadow(0 4px 4px rgb(42 23 14 / 0.08));
+  pointer-events: none;
+  transition: opacity 0.35s;
+}
+
+.site-header__hem-fill {
+  fill: var(--color-milk);
+}
+
+.site-header__hem-line {
+  fill: none;
+  stroke: rgb(42 23 14 / 0.14);
+  stroke-width: 1.5px;
+}
+
+.site-header[data-scrolled="true"]::before,
+.site-header[data-scrolled="true"] .site-header__hem,
+.site-header:not([data-home])::before,
+.site-header:not([data-home]) .site-header__hem {
+  opacity: 1;
+}
+
+.site-header__bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  max-width: var(--container-page);
+  height: var(--header-h);
+  margin-inline: auto;
+}
+
+.site-header__brand {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 999px;
+}
+
+.site-header__logo {
+  width: 2.6rem;
+  height: 2.6rem;
+  transition: rotate 0.6s var(--ease-pounce);
+}
+
+.site-header__brand:hover .site-header__logo {
+  rotate: -8deg;
+}
+
+/* Wordmark: shown on phones and on >=1280px, hidden in between where the nav needs the room. */
+.site-header__name {
+  display: none;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.site-header__nav {
+  display: none;
+  flex: 1;
+  justify-content: center;
+}
+
+.site-header__nav ul {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.25rem, 2.3vw, 2.4rem);
+}
+
+.site-header__end {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-left: auto;
+}
+
+@media (min-width: 768px) {
+  .site-header__logo {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .site-header__nav {
+    display: flex;
+  }
+}
+
+@media (max-width: 1023px) {
+  .site-header__name {
+    display: inline;
+    font-size: clamp(1.15rem, 4.6vw, 1.4rem);
+  }
+}
+
+@media (min-width: 1280px) {
+  .site-header__name {
+    display: inline;
+  }
+}
+
+/* ---------- Nav link with a paw that pops in under the active/hovered item ---------- */
+
+.nav-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.55rem 0.1rem;
+  color: var(--color-cocoa);
+  font-size: 1rem;
+  font-weight: 620;
+  white-space: nowrap;
+  transition: color 0.25s;
+}
+
+.nav-link:hover {
+  color: var(--color-toffee-ink);
+}
+
+.nav-link[data-active="true"] {
+  color: var(--color-toffee-deep);
+}
+
+.nav-link__paw {
+  position: absolute;
+  bottom: -0.45rem;
+  left: 50%;
+  width: 0.8rem;
+  height: 0.8rem;
+  color: var(--color-toffee);
+  opacity: 0;
+  rotate: -10deg;
+  scale: 0.4;
+  translate: -50%;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    scale 0.45s var(--ease-pounce);
+}
+
+.nav-link:hover .nav-link__paw {
+  opacity: 0.45;
+  scale: 1;
+}
+
+.nav-link[data-active="true"] .nav-link__paw {
+  opacity: 1;
+  scale: 1;
+}
+
+/* =========================================================================
+   Mobile menu (components/layout/MobileMenu.tsx): a full-screen <dialog>
+   that opens with a circle growing out of the Menu button.
+   ========================================================================= */
+
+.mobile-menu[open] {
+  animation: menu-in 0.5s var(--ease-snap);
+}
+
+.mobile-menu[data-closing] {
+  animation: menu-out 0.42s var(--ease-snap) forwards;
+}
+
+.mobile-menu[data-closing]::backdrop {
+  animation: menu-backdrop-out 0.42s forwards;
+}
+
+.mobile-menu[open] .mobile-menu__link {
+  animation: menu-link-in 0.55s var(--ease-pounce) both;
+}
+
+/* Links stagger in, 50ms apart. */
+.mobile-menu li:nth-child(2) .mobile-menu__link {
+  animation-delay: 50ms;
+}
+.mobile-menu li:nth-child(3) .mobile-menu__link {
+  animation-delay: 0.1s;
+}
+.mobile-menu li:nth-child(4) .mobile-menu__link {
+  animation-delay: 0.15s;
+}
+.mobile-menu li:nth-child(5) .mobile-menu__link {
+  animation-delay: 0.2s;
+}
+.mobile-menu li:nth-child(6) .mobile-menu__link {
+  animation-delay: 0.25s;
+}
+
+.mobile-menu__link[data-active="true"] {
+  color: var(--color-toffee-deep);
+}
+
+/* The menu is a phone/tablet feature; hide it (and its scroll lock) from 1024px up. */
+@media (min-width: 1024px) {
+  .mobile-menu {
+    display: none;
+  }
+}
+
+/* Stop the page scrolling behind an open menu. */
+@media (max-width: 1023px) {
+  html:has(.mobile-menu[open]) {
+    overflow-y: hidden;
+  }
+}
+
+@keyframes menu-in {
+  from {
+    clip-path: circle(0% at calc(100% - 3rem) 2rem);
+  }
+  to {
+    clip-path: circle(150% at calc(100% - 3rem) 2rem);
+  }
+}
+
+@keyframes menu-out {
+  from {
+    clip-path: circle(150% at calc(100% - 3rem) 2rem);
+  }
+  to {
+    clip-path: circle(0% at calc(100% - 3rem) 2rem);
+  }
+}
+
+@keyframes menu-backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes menu-link-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.2rem) rotate(-2deg);
+  }
+}
+
+/* =========================================================================
+   Footer (components/layout/SiteFooter.tsx)
+   ========================================================================= */
+
+/* Wavy hill that rises out of the footer into the page above it. */
+.footer-hill {
+  position: absolute;
+  bottom: calc(100% - 1px);
+  left: 0;
+  display: block;
+  width: 100%;
+  height: clamp(2.5rem, 5vw, 5rem);
+  fill: var(--color-night);
+}
+
+/* Crescent moon: a circle with an inset shadow that eats one side. */
+.footer-moon {
+  position: absolute;
+  top: 10%;
+  right: 9%;
+  width: clamp(2.6rem, 4vw, 3.6rem);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  box-shadow: inset -0.85rem 0.25rem 0 0 var(--color-honey-soft);
+  filter: drop-shadow(0 0 18px rgb(251 227 180 / 0.35));
+  rotate: -18deg;
+}
+
+/* Stars fade and spin a little; each star sets its own animation-delay inline. */
+.twinkle {
+  animation: twinkle 3.2s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.8) rotate(0);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1) rotate(20deg);
+  }
+}
+
+/* ---------- Basket (components/decor/Basket.tsx): back rim, Teddy, front weave ---------- */
+
+.basket {
+  --basket-w: clamp(14rem, 24vw, 19rem);
+  position: relative;
+  width: var(--basket-w);
+  aspect-ratio: 300 / 240;
+  /* Bleed off the left edge of the screen a little, like the original. */
+  margin-left: calc(var(--basket-w) * -0.36);
+}
+
+.basket > * {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.basket > svg {
+  pointer-events: none;
+}
+
+/* Stacking: back rim < Teddy < front weave. */
+.basket__back {
+  z-index: 1;
+}
+.basket__pup {
+  z-index: 10;
+}
+.basket__front {
+  z-index: 25;
+}
+
+.basket__hollow {
+  fill: #5d3519;
+  stroke: var(--color-cocoa);
+  stroke-width: 3px;
+}
+
+.basket__rim-line {
+  fill: none;
+  stroke: var(--color-cocoa);
+  stroke-width: 13px;
+  stroke-linecap: round;
+}
+
+.basket__rim {
+  fill: none;
+  stroke: #e8b46c;
+  stroke-width: 7.5px;
+  stroke-linecap: round;
+}
+
+.basket__body {
+  fill: #d9a05a;
+  stroke: var(--color-cocoa);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.basket__weave {
+  fill: none;
+  stroke: rgb(42 23 14 / 0.28);
+  stroke-width: 2.6px;
+  stroke-linecap: round;
+}
+
+.basket__weave--stakes {
+  stroke: rgb(42 23 14 / 0.15);
+}
+
+/* Idle life for the sleeping pup: breathing, blinking and an occasional ear twitch. */
+@media (prefers-reduced-motion: no-preference) {
+  .basket__pup .teddy {
+    transform-origin: 70% 66%;
+    animation: teddy-breathe 3.8s ease-in-out infinite;
+  }
+
+  .basket__pup [data-p="open"] {
+    animation: teddy-blink-open 6.2s infinite;
+  }
+
+  .basket__pup [data-p="shut"] {
+    animation: teddy-blink-shut 6.2s infinite;
+  }
+
+  .basket__pup [data-p="earR"] {
+    transform-box: view-box;
+    transform-origin: 250px 82px;
+    animation: teddy-ear-twitch 7.4s ease-in-out 2.2s infinite;
+  }
+}
+
+@keyframes teddy-breathe {
+  50% {
+    scale: 1 1.014;
+  }
+}
+
+/* Open eyes and closed eyes swap for a blink around 94% of the cycle. */
+@keyframes teddy-blink-open {
+  0%,
+  92%,
+  97%,
+  100% {
+    opacity: 1;
+  }
+  94.5% {
+    opacity: 0;
+  }
+}
+
+@keyframes teddy-blink-shut {
+  0%,
+  92%,
+  97%,
+  100% {
+    opacity: 0;
+  }
+  94.5% {
+    opacity: 1;
+  }
+}
+
+@keyframes teddy-ear-twitch {
+  0%,
+  84%,
+  100% {
+    rotate: 0deg;
+  }
+  87% {
+    rotate: -11deg;
+  }
+  90% {
+    rotate: 5deg;
+  }
+  93% {
+    rotate: -2deg;
+  }
+}

@@ -1,0 +1,1 @@
+Home-page scenes (hero lineup, "Meet the pups" doors, two ways, journey chat, passport, families, FAQ teaser, final CTA). One component per scene, each built on `ui/Section`. Spec: `research/DESIGN-SPEC.md` section 4.1.

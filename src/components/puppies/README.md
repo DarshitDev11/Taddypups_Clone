@@ -1,0 +1,1 @@
+Puppy-specific components: sketch card, ticket, door, filter chips, gallery, lightbox, tag card, prev/next cards. Data comes from `@/lib/puppies`. Spec: `research/DESIGN-SPEC.md` sections 3.7, 4.2, 4.3 and 4.4.

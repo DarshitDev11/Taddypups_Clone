@@ -2,7 +2,7 @@
  * Global stylesheet. Order matters:
  *   1. Tailwind itself
  *   2. tokens (@theme), base resets, custom utilities, component classes
- *   3. site shell styles (header, menu, footer) — added with the layout
+ *   3. site shell styles (header, menu, footer)
  *
  * Page-specific CSS: add src/styles/pages/<page>.css and @import it below.
  */
@@ -12,3 +12,4 @@
 @import "../styles/base.css";
 @import "../styles/utilities.css";
 @import "../styles/components.css";
+@import "../styles/shell.css";
