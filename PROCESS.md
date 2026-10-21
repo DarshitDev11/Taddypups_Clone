@@ -79,11 +79,17 @@ Because of this I **re-prioritised the plan** (PLAN.md §1b): make every page lo
 
 **Why this matters:** building from measured numbers (e.g. "button padding 14px 28px, radius 999px") gets much closer to the original than building by eye.
 
-### Step 5 — Building *(to be filled in)*
-- Project setup (Next.js + Tailwind + fonts + colour tokens)
-- Shared parts: header, mobile menu, footer, sticky WhatsApp bar
-- Pages, one section at a time, compared against the screenshots
-- Contact form with validation and spam protection
+### Step 5 — Building
+1. **Foundation (one Sonnet 5.5 agent):** Next.js 16 + Tailwind v4 + TypeScript scaffold, colour tokens and variable fonts, typed data for 42 puppies and 64 family photos, the shared layout (header that hides on scroll, mobile menu `<dialog>`, dark footer, sticky WhatsApp/Call bar), README and `docs/ARCHITECTURE.md`. Checked against the original's screenshots at 1440px and 375px.
+2. **Pages (three Sonnet 5.5 agents in parallel):** each agent worked in its own **git worktree** (a separate checkout on its own branch) so they couldn't overwrite each other:
+   - Home page (8 illustrated scenes, sideways-scrolling doors, scroll animations)
+   - Puppy pages (sketchbook with URL filters, 42 static detail pages with gallery/lightbox/enquiry form, gone-home tickets)
+   - Inner pages (polaroid wall, how it works, FAQ corkboard with search, contact letter form, 404 poster)
+3. **Merging:** I merged each branch into `main`, resolved the one conflict (CSS import lines — kept both sides), and ran lint + typecheck + build after every merge before pushing.
+4. **Small parts done directly in the main session** (cheaper than a new agent): the page-transition curtain, merges, fixes.
+5. **Forms:** the enquiry and contact forms use a Next.js **Server Action** with **zod** validation shared by browser and server, plus a hidden honeypot field against spam bots. They only log the submission (no real business receives fake enquiries).
+
+**Token lesson:** agents start with no memory and re-read the whole spec, and screenshot loops are expensive. After hitting the usage limit I switched to: small tasks in the main session, agents only for big separate chunks, one comparison pass per section.
 
 ### Step 6 — Testing *(to be filled in)*
 - Side-by-side screenshot comparison: original vs clone at all 4 sizes (same Playwright script)
