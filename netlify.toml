@@ -1,0 +1,8 @@
+# Netlify settings live here so the dashboard's blank build fields don't matter.
+# Netlify's Next.js runtime serves the site; the publish directory must be .next, not a static folder.
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
