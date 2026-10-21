@@ -135,6 +135,7 @@ export function HeroLineup({ puppies }: HeroLineupProps) {
                     alt=""
                     fill
                     sizes={sizes}
+                    loading="eager" // above the fold on every screen size
                     style={{ objectFit: "cover", objectPosition: puppy.position }}
                   />
                 </span>

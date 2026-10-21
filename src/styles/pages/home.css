@@ -23,7 +23,9 @@
 /* On phones the original swaps most scene mascots for a small one that peeks in from the screen edge. */
 @media (max-width: 767px) {
   .home-meet__teddy,
+  .home-fork__teddy,
   .home-journey__teddy,
+  .home-book__teddy,
   .home-night__pup {
     display: none;
   }
@@ -304,7 +306,8 @@
     min-height: clamp(14rem, 36vh, 19rem);
   }
 
-  .home-lineup__seat {
+  /* :nth-child(n) lifts the specificity to match the per-seat rules above, so --w really changes. */
+  .home-lineup__seat:nth-child(n) {
     --w: 17vw;
   }
   .home-lineup__seat:nth-child(1) {
@@ -1048,7 +1051,13 @@
 
 .home-journey__side {
   position: relative;
-  padding-bottom: clamp(5.5rem, 22vw, 7rem);
+}
+
+/* Room for Teddy under the phone (he is hidden on phones). */
+@media (min-width: 768px) {
+  .home-journey__side {
+    padding-bottom: clamp(5.5rem, 22vw, 7rem);
+  }
 }
 
 .home-journey__teddy {
@@ -1455,9 +1464,14 @@
 
 /* Phones: pages stacked, the spine is the line between them. */
 .home-book__page--left {
-  padding-bottom: clamp(9rem, 22vw, 11rem);
   border-bottom-width: 1.5px;
   border-radius: 1.1rem 1.1rem 0 0;
+}
+
+@media (min-width: 768px) {
+  .home-book__page--left {
+    padding-bottom: clamp(9rem, 22vw, 11rem); /* room for Teddy */
+  }
 }
 
 .home-book__page--right {
