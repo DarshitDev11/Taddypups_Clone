@@ -30,7 +30,7 @@ export function StatusTag({ status, variant = "sticker", className }: StatusTagP
     return (
       <span
         className={cn(
-          "font-scrawl inline-grid -rotate-6 rounded-full border-[3px] border-current px-3 py-1 text-sm tracking-wide text-toffee-deep uppercase",
+          "stamp-thump font-scrawl inline-grid -rotate-6 rounded-full border-[3px] border-current px-3 py-1 text-sm tracking-wide text-toffee-deep uppercase",
           className,
         )}
       >

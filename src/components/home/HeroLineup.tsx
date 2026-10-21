@@ -47,15 +47,24 @@ export function HeroLineup({ puppies }: HeroLineupProps) {
   // The puppy about to swap in: rendered hidden for a moment so its photo is loaded before the swap.
   const [incoming, setIncoming] = useState<number | null>(null);
 
-  // The original shuffles who sits where on every load. Done after mount so server and client HTML match.
+  // The original shuffles who sits where on every load. Done once the page has loaded (so the new photos
+  // never compete with the first paint) and after mount (so server and client HTML match).
   useEffect(() => {
-    const order = puppies.map((_, i) => i);
-    for (let i = order.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [order[i], order[j]] = [order[j], order[i]];
+    const shuffle = () => {
+      const order = puppies.map((_, i) => i);
+      for (let i = order.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [order[i], order[j]] = [order[j], order[i]];
+      }
+      seatPuppyRef.current = order.slice(0, SEAT_COUNT);
+      setSeatPuppy(seatPuppyRef.current);
+    };
+    if (document.readyState === "complete") {
+      shuffle();
+      return;
     }
-    seatPuppyRef.current = order.slice(0, SEAT_COUNT);
-    setSeatPuppy(seatPuppyRef.current);
+    window.addEventListener("load", shuffle, { once: true });
+    return () => window.removeEventListener("load", shuffle);
   }, [puppies]);
 
   useEffect(() => {

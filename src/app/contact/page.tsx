@@ -6,7 +6,8 @@ import { ContactLetterForm, type PuppyOption } from "@/components/forms/ContactL
 import { Button } from "@/components/ui/Button";
 import { InnerScene } from "@/components/ui/InnerScene";
 import { siteConfig } from "@/data/siteConfig";
-import { genderLabels, getAvailablePuppies, getCoverImage, hasOwnName } from "@/lib/puppies";
+import { genderLabels, getAvailablePuppies, hasOwnName } from "@/lib/puppies";
+import type { PuppyImage } from "@/types/puppy";
 import { pageMetadata } from "@/lib/metadata";
 import { generalWhatsAppLink } from "@/lib/whatsapp";
 
@@ -25,11 +26,16 @@ function getPuppyOptions(): PuppyOption[] {
 
 export default function ContactPage() {
   const { contact } = siteConfig;
-  const available = getAvailablePuppies();
-  // The showroom photo: the first available puppy's cover (the original used a showroom shot we don't have).
-  const showroomPhoto = getCoverImage(
-    available.find((puppy) => puppy.slug === "maltipoo-female") ?? available[0],
-  );
+  const showroomPhoto: PuppyImage = {
+    kind: "image",
+    src: "/showroom/3.jpg",
+    width: 1080,
+    height: 1920,
+    alt: "The apricot teddy bear puppy from our showroom, held up to say hello",
+    focalX: 0.5,
+    focalY: 0.35,
+    color: "#e8dfd3",
+  };
 
   return (
     <InnerScene sky={["#fff9ee", "#f9dca4"]} aria-labelledby="contact-title">

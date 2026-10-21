@@ -6,15 +6,12 @@ import { ways } from "@/components/home/homeContent";
 import { TeddyStop } from "@/components/home/TeddyStop";
 import { Button } from "@/components/ui/Button";
 import { Section } from "@/components/ui/Section";
-import { focalPosition, getCoverImage, getPuppyBySlug } from "@/lib/puppies";
+import { getCoverImage, getPuppyBySlug } from "@/lib/puppies";
 
-// TODO: the original shows a showroom photo of an apricot teddy puppy; it was not downloaded in the research
-// assets, so Max (an apricot Maltipoo held up to the camera) stands in for it.
-const SHOWROOM_PUPPY = "maltipoo-max-male";
+const SHOWROOM_PHOTO = { src: "/showroom/0.jpg", width: 1080, height: 1920 };
 const FLIGHT_PUPPY = "korean-teacup-maltipoo-female";
 
 export function TwoWaysHome() {
-  const showroom = getCoverImage(getPuppyBySlug(SHOWROOM_PUPPY)!);
   const flight = getCoverImage(getPuppyBySlug(FLIGHT_PUPPY)!);
 
   return (
@@ -44,11 +41,11 @@ export function TwoWaysHome() {
               <figure className="home-window">
                 <span className="home-window__glass">
                   <Image
-                    src={showroom.src}
+                    src={SHOWROOM_PHOTO.src}
                     alt="A tiny apricot teddy bear puppy held up in the TeddyPups showroom"
                     fill
                     sizes="(min-width: 1024px) 12rem, 60vw"
-                    style={{ objectFit: "cover", objectPosition: focalPosition(showroom) }}
+                    style={{ objectFit: "cover", objectPosition: "50% 35%" }}
                   />
                 </span>
                 <figcaption className="font-scrawl">{ways.local.caption}</figcaption>

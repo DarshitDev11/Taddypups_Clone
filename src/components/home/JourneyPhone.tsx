@@ -5,11 +5,11 @@ import Link from "next/link";
 import { ChatClip } from "@/components/home/ChatClip";
 import { chatBreeds } from "@/components/home/homeContent";
 import { siteConfig } from "@/data/siteConfig";
-import { focalPosition, getCoverImage, getPuppyBySlug } from "@/lib/puppies";
+import { getCoverImage, getPuppyBySlug } from "@/lib/puppies";
 import { generalWhatsAppLink, whatsappMessages } from "@/lib/whatsapp";
 
-// TODO: the original chat shows photos of a showroom puppy that were not downloaded in the research assets,
-// so Max (an apricot Maltipoo) stands in for it.
+// The four showroom snapshots sent in the chat, and Max's video clip (the original's clip was not captured).
+const SHOWROOM_SNAPS = ["/showroom/0.jpg", "/showroom/1.jpg", "/showroom/2.jpg", "/showroom/3.jpg"];
 const CHAT_PUPPY = "maltipoo-max-male";
 
 /** Paw outline (64-unit box), used as the footprints on the route sketch. */
@@ -33,13 +33,6 @@ export function JourneyPhone() {
   const video = puppy.media.find((item) => item.kind === "video");
   const poster = video?.kind === "video" ? video.poster : cover;
 
-  // Four snapshots: the same photo cropped differently stands in for the original's four shots.
-  const snaps = [
-    { image: cover, position: focalPosition(cover) },
-    { image: poster, position: focalPosition(poster) },
-    { image: cover, position: "30% 20%" },
-    { image: cover, position: "70% 60%" },
-  ];
 
   return (
     <div className="home-phone" role="group" aria-label="A WhatsApp conversation with TeddyPups U.A.E.">
@@ -74,14 +67,14 @@ export function JourneyPhone() {
           <Typing />
           <div className="home-msg home-msg--them home-msg--media">
             <div className="home-snaps">
-              {snaps.map(({ image, position }, index) => (
-                <span key={index} className="home-snaps__one">
+              {SHOWROOM_SNAPS.map((src) => (
+                <span key={src} className="home-snaps__one">
                   <Image
-                    src={image.src}
+                    src={src}
                     alt=""
                     fill
                     sizes="6rem"
-                    style={{ objectFit: "cover", objectPosition: position }}
+                    style={{ objectFit: "cover", objectPosition: "50% 35%" }}
                   />
                 </span>
               ))}

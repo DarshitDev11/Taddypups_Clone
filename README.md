@@ -4,8 +4,10 @@ A pixel-accurate rebuild of [puppy.instabizweb.com](https://puppy.instabizweb.co
 storybook-style site, made as a technical assignment. Every contact detail is a **placeholder**
 (see [Placeholder contact details](#placeholder-contact-details)); this project is not the real business.
 
-> Status: the foundation is done (design system, data layer, header, mobile menu, footer, sticky mobile bar,
-> routing). The pages are placeholders that use the shared pieces; the full designs are built on top of this.
+**Live site:** https://taddypupps.netlify.app
+
+> Status: all pages are built (home, puppies, puppy detail, gone home, happy families, how it works, FAQ,
+> contact, 404), including the live Teddy mascot, paw-print cursor trail and photo lightboxes.
 
 ## Tech stack
 

@@ -20,7 +20,7 @@ Clone https://puppy.instabizweb.com/ as closely as possible (design, layout, res
 | **Playwright** | Automated browser: full-page screenshots at 4 screen sizes + reading exact styles |
 | **Chrome DevTools** | Manual checking of spacing, fonts, colours |
 | Next.js, Tailwind CSS, TypeScript | Building the clone (same stack as the original) |
-| GitHub + Vercel | Source code + deployment |
+| GitHub + Netlify | Source code + deployment |
 
 ## 3. My approach in one sentence
 
@@ -91,12 +91,15 @@ Because of this I **re-prioritised the plan** (PLAN.md §1b): make every page lo
 
 **Token lesson:** agents start with no memory and re-read the whole spec, and screenshot loops are expensive. After hitting the usage limit I switched to: small tasks in the main session, agents only for big separate chunks, one comparison pass per section.
 
-### Step 6 — Testing *(to be filled in)*
-- Side-by-side screenshot comparison: original vs clone at all 4 sizes (same Playwright script)
-- Lighthouse scores, real phone test, `npm run build` with no errors
+### Step 6 — Testing
+- **Page heights:** every route compared against the original at 768px and 1024px with one Playwright script (all identical except `/happy-families`, 24px shorter).
+- **Behaviour smoke test (headless Playwright):** photo lightbox opens, chat video plays, hero order shuffles, JSON-LD present, no console errors, and the live Teddy walks between stops on desktop and sits in a screen-edge lane on a 375px phone.
+- **Lighthouse (mobile, production build):** Accessibility 100, Best practices 100, SEO 100, Performance ~73. The performance gap is mostly the 1-second intro curtain, which the original has too, so it was kept for fidelity.
+- `npm run typecheck`, `npm run lint` and `npm run build` pass with no errors.
 
-### Step 7 — Deployment *(to be filled in)*
-- GitHub repo → Vercel (auto-deploys on every push)
+### Step 7 — Deployment
+- GitHub repo → **Netlify**, live at https://taddypupps.netlify.app (auto-deploys on every push to `main`).
+- First deploy returned a 404 for every page: Netlify had uploaded the raw `.next` folder as static files, because the Next.js runtime was not applied. Fixed by committing a `netlify.toml` that sets the build command and loads `@netlify/plugin-nextjs` explicitly.
 
 ---
 
@@ -130,6 +133,7 @@ The prompts I typed into Claude Code (as written, in order):
 - Animations can't be seen in still screenshots → read animation settings from the CSS and checked by watching the site.
 - The home page has pinned and scroll-linked sections, so a normal full-page screenshot comes out broken → took **"scroll-step" screenshots** (one per screen height while scrolling) instead.
 - The site turned out to be much more complex than it looked (a storybook with a mascot) → re-prioritised: core pages first, animations second, mascot movement last.
+- Netlify served a 404 on every route after the first deploy → read the deploy log: no config file, 0 functions uploaded. Added `netlify.toml` with the Next.js plugin.
 - Couldn't test the contact form's submit animation without sending a fake enquiry to a real business → rebuilt it from the CSS rules only.
 
 ## 8. How I used AI responsibly

@@ -169,3 +169,32 @@
     --ink-soft: color-mix(in oklab, var(--color-milk) 80%, transparent);
   }
 }
+
+/* The "Gone home" stamp thumps down as it scrolls into view (only where scroll-driven animations exist). */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .stamp-thump {
+      animation: stamp-thump linear both;
+      animation-timeline: view();
+      animation-range: entry 30% cover 40%;
+    }
+  }
+}
+
+@keyframes stamp-thump {
+  0% {
+    scale: 1.25;
+    rotate: -22deg;
+    opacity: 0;
+  }
+  60% {
+    scale: 0.94;
+    rotate: -8deg;
+    opacity: 1;
+  }
+  100% {
+    scale: 1;
+    rotate: -10deg;
+    opacity: 1;
+  }
+}

@@ -29,6 +29,7 @@ export function PupActor() {
   const [bubble, setBubble] = useState<string | null>(null);
   const [hearts, setHearts] = useState<number[]>([]);
   const timers = useRef(new Set<ReturnType<typeof setTimeout>>());
+  const sayRef = useRef<(text: string) => void>(() => {});
 
   useEffect(() => {
     const layer = layerRef.current;
@@ -41,6 +42,20 @@ export function PupActor() {
       (el) => el.dataset.pose !== "peek",
     );
     const hero = document.querySelector<HTMLElement>(".home-hero");
+
+    // Comment on the chat as its replies arrive (data-step is written by JourneyTracker).
+    const CUES: Record<string, string> = { "2": "ooh, photos!", "3": "home soon!" };
+    const tracker = document.querySelector<HTMLElement>("[data-step]");
+    let lastStep = tracker?.dataset.step;
+    const stepWatcher = tracker
+      ? new MutationObserver(() => {
+          const step = tracker.dataset.step;
+          if (step === lastStep) return;
+          lastStep = step;
+          if (step && CUES[step]) sayRef.current(CUES[step]);
+        })
+      : null;
+    stepWatcher?.observe(tracker!, { attributes: true, attributeFilter: ["data-step"] });
     if (!stops.length) return;
 
     const cur = { x: 0, y: 0, s: 1 };
@@ -164,6 +179,13 @@ export function PupActor() {
       if (!frame) lastTime = 0;
     };
 
+    // Now and then Teddy does something on his own while the page is quiet.
+    const IDLE = ["hm?", "woof!", "woof woof!"];
+    const idleTimer = setInterval(() => {
+      if (document.hidden || layer.style.opacity !== "1" || Math.random() < 0.5) return;
+      sayRef.current(IDLE[Math.floor(Math.random() * IDLE.length)]);
+    }, 9000);
+
     const wake = () => {
       if (!frame) frame = requestAnimationFrame(tick);
     };
@@ -175,6 +197,8 @@ export function PupActor() {
       window.removeEventListener("scroll", wake);
       window.removeEventListener("resize", wake);
       cancelAnimationFrame(frame);
+      stepWatcher?.disconnect();
+      clearInterval(idleTimer);
       setActive(null);
       timerSet.forEach(clearTimeout);
       timerSet.clear();
@@ -189,11 +213,18 @@ export function PupActor() {
     timers.current.add(id);
   };
 
+  const say = (text: string) => {
+    setBubble(text);
+    later(() => setBubble(null), BUBBLE_MS);
+  };
+  useEffect(() => {
+    sayRef.current = say;
+  });
+
   const onPet = () => {
     const id = Date.now();
-    setBubble(WOOFS[Math.floor(Math.random() * WOOFS.length)]);
+    say(WOOFS[Math.floor(Math.random() * WOOFS.length)]);
     setHearts((list) => [...list.slice(-4), id]);
-    later(() => setBubble(null), BUBBLE_MS);
     later(() => setHearts((list) => list.filter((h) => h !== id)), HEART_MS);
   };
 
