@@ -1289,11 +1289,34 @@
 
 .home-clip {
   position: relative;
+  display: block;
+  cursor: pointer;
   width: 9rem;
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: 0.8rem;
   background: var(--color-cocoa);
+}
+
+.home-clip__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+
+.home-clip__video[data-playing="true"] {
+  opacity: 1;
+}
+
+.home-clip__play[data-playing="true"] {
+  opacity: 0;
+}
+
+.home-clip:hover .home-clip__play[data-playing="true"] {
+  opacity: 1;
 }
 
 .home-clip__play {

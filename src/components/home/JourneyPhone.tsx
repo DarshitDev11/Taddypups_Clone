@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ChatClip } from "@/components/home/ChatClip";
 import { chatBreeds } from "@/components/home/homeContent";
 import { siteConfig } from "@/data/siteConfig";
 import { focalPosition, getCoverImage, getPuppyBySlug } from "@/lib/puppies";
@@ -87,20 +88,9 @@ export function JourneyPhone() {
             </div>
           </div>
           <div className="home-msg home-msg--them home-msg--media">
-            <div className="home-clip" role="img" aria-label="Video of a tiny apricot teddy bear puppy">
-              <Image
-                src={poster.src}
-                alt=""
-                fill
-                sizes="9rem"
-                style={{ objectFit: "cover", objectPosition: "50% 30%" }}
-              />
-              <span className="home-clip__play">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-              </span>
-            </div>
+            {video ? (
+              <ChatClip src={video.src} poster={poster.src} label="video of a tiny apricot teddy bear puppy" />
+            ) : null}
           </div>
           <p className="home-msg home-msg--them">
             Our team will share real photos, health details, and all necessary information directly on WhatsApp.

@@ -31,7 +31,7 @@ const SEAT_COUNT = 6;
 const sizes = "(min-width: 1024px) 14rem, 24vw";
 
 interface HeroLineupProps {
-  /** Every puppy that may appear; the first SEAT_COUNT fill the seats at load. */
+  /** Every puppy that may appear; SEAT_COUNT of them are picked at random at load. */
   puppies: LineupPuppy[];
 }
 
@@ -46,6 +46,17 @@ export function HeroLineup({ puppies }: HeroLineupProps) {
   const [hoverSeat, setHoverSeat] = useState<number | null>(null);
   // The puppy about to swap in: rendered hidden for a moment so its photo is loaded before the swap.
   const [incoming, setIncoming] = useState<number | null>(null);
+
+  // The original shuffles who sits where on every load. Done after mount so server and client HTML match.
+  useEffect(() => {
+    const order = puppies.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    seatPuppyRef.current = order.slice(0, SEAT_COUNT);
+    setSeatPuppy(seatPuppyRef.current);
+  }, [puppies]);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;

@@ -1,0 +1,82 @@
+/* The live Teddy (components/home/PupActor.tsx): a fixed layer that never blocks clicks except on Teddy himself. */
+
+.pup-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.pup-actor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 240px;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+.pup-actor__hit {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: inherit;
+  pointer-events: auto;
+}
+
+.pup-actor__art {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* The still copy in a scene steps aside while the actor stands in for it. */
+[data-pup-stop][data-pup-active] .teddy {
+  visibility: hidden;
+}
+
+.pup-bubble {
+  position: absolute;
+  top: -1rem;
+  left: 55%;
+  padding: 0.2rem 0.8rem;
+  border: 2.5px solid var(--color-cocoa);
+  border-radius: 1.1rem 1.1rem 1.1rem 0.25rem;
+  background: var(--color-milk);
+  box-shadow: 2px 3px rgb(42 23 14 / 0.18);
+  font-size: 1.05rem;
+  white-space: nowrap;
+  animation: pup-pop 0.4s var(--ease-pounce) both;
+}
+
+.pup-heart {
+  position: absolute;
+  top: 10%;
+  font-size: 1.35rem;
+  color: #c2622b;
+  animation: pup-float 1.2s ease-out both;
+}
+
+@keyframes pup-pop {
+  from {
+    scale: 0.4;
+    opacity: 0;
+  }
+}
+
+@keyframes pup-float {
+  to {
+    translate: 0 -4.5rem;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pup-bubble,
+  .pup-heart {
+    animation: none;
+  }
+}

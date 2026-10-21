@@ -1,7 +1,7 @@
 # PENDING — Handoff for the next session / model
 
 > Read this first if you are picking up this project. It says what is done, what is left (in priority order), and how to work here without wasting time or tokens.
-> Last updated: 2026-10-21.
+> Last updated: 2026-10-21 (second session: mascot, paw trail, lightbox, video, plane, JSON-LD, hash scroll done).
 
 ---
 
@@ -26,31 +26,31 @@ Research captures (screenshots, raw computed styles, decoded markup, assets) are
 
 ### A. Must do (deliverables)
 - [ ] **A1. Deploy to Vercel.** Import the GitHub repo in Vercel (user signs in at vercel.com with GitHub), framework preset Next.js, no env vars needed. Verify the live URL on desktop + phone. Put the URL in `README.md` and `PROCESS.md` §4 Step 7.
-- [ ] **A2. Final visual check at 768px and 1024px** for every route (`/`, `/puppies`, `/puppies/copper-male`, `/gone-home`, `/happy-families`, `/how-it-works`, `/faq`, `/contact`, a 404). Agents only compared 1440 and 375. Compare against `research/screenshots/<route>-768.png` / `-1024.png` and fix what's broken.
-- [ ] **A3. Mobile pages ~24px taller than original** on how-it-works, contact and faq (also footer is 24px taller at 375). Likely in the shared footer (`src/components/layout/SiteFooter.tsx` / `src/styles/shell.css`). Measure and fix.
+- [x] **A2. _Checked by document height at 768 and 1024 for every route: all match the original (happy-families is 24px shorter). No per-section visual pass at those widths yet._ Final visual check at 768px and 1024px** for every route (`/`, `/puppies`, `/puppies/copper-male`, `/gone-home`, `/happy-families`, `/how-it-works`, `/faq`, `/contact`, a 404). Agents only compared 1440 and 375. Compare against `research/screenshots/<route>-768.png` / `-1024.png` and fix what's broken.
+- [x] **A3. _Not a bug: the extra 24px is the intentional "Demo clone for a technical assignment" footer line wrapping onto its own row._ Mobile pages ~24px taller than original** on how-it-works, contact and faq (also footer is 24px taller at 375). Likely in the shared footer (`src/components/layout/SiteFooter.tsx` / `src/styles/shell.css`). Measure and fix.
 
 ### B. Visible differences
-- [ ] **B1. Moving Teddy mascot ("pup actor").** Original: one fixed-position Teddy walks between "stops" while scrolling (hero peek → doors floor → signpost → phone → passport → note → FAQ tilt → front door bow → basket in footer), with poses `peek, walk, sit, sniff, snug, bow`, speech bubbles ("ooh, photos!", "home soon!", "woof!", "hm?") and hearts on click. Below 768px it's a "lane" mode that peeks from the screen edge above the sticky bar. Spec: `research/DESIGN-SPEC.md` §3.6, data in `research/raw/pup-actor.json`.
+- [x] **B1. _Done in `src/components/home/PupActor.tsx` + `src/styles/pup-actor.css` (fixed Teddy walking between stops, poses, click → bubble + hearts, mobile lane mode). Not done: scene cues ("ooh, photos!"), idle behaviours, hover-look, paw prints along its path, hero/basket "behind" layering (those two stay static)._ Moving Teddy mascot ("pup actor").** Original: one fixed-position Teddy walks between "stops" while scrolling (hero peek → doors floor → signpost → phone → passport → note → FAQ tilt → front door bow → basket in footer), with poses `peek, walk, sit, sniff, snug, bow`, speech bubbles ("ooh, photos!", "home soon!", "woof!", "hm?") and hearts on click. Below 768px it's a "lane" mode that peeks from the screen edge above the sticky bar. Spec: `research/DESIGN-SPEC.md` §3.6, data in `research/raw/pup-actor.json`.
   - Hooks already in place: every static Teddy in home scenes is rendered by `src/components/home/TeddyStop.tsx` with `data-pup-stop`, `data-pose`, `data-facing`. A simpler acceptable version: one fixed Teddy that moves to the nearest visible stop's position/pose with a Motion transition.
   - Shared art: `src/components/decor/Teddy.tsx` (walk/peek poses differ slightly from original; `sniff` is approximated).
   - On phones the static Teddy is currently **hidden** in meet/fork/journey/passport/night scenes — the lane mode should replace it.
 - [ ] **B2. Missing showroom photos.** Some Dubai-showroom images were never downloaded; Max is a stand-in in the home shop window, chat snapshots/clip, behind the house door, and on `/contact` (original shows an apricot poodle). Search the code for `TODO` mentioning stand-in/showroom. Get the real public image URLs from the live site's home and contact pages, save to `public/`, swap them in.
-- [ ] **B3. Paw-print cursor trail** (desktop, mouse only): canvas `fixed inset-0 z-[70] pointer-events-none`; every 46px of travel draw a toffee `#c2622b` paw at α .42, solid 600ms then fade 400ms, max 14 prints, rotated to heading. Spec §2.10. The custom paw cursor itself is already in CSS.
-- [ ] **B4. Hero puppies order:** original shuffles on load (`src/components/home/HeroLineup.tsx` uses a fixed first six).
-- [ ] **B5. Home chat clip** is a poster with a play badge — make it a real `<video>` (videos are in `public/videos/`).
-- [ ] **B6. Home photo-wall prints** link to `/happy-families`; original opens a lightbox. Reuse the viewer from `src/components/happy-families/PhotoViewer.tsx` (TODO in `HappyFamiliesTeaser.tsx`).
-- [ ] **B7. How-it-works delivery plane** is static; original moves it along its route by script.
+- [x] **B3. _`src/components/layout/PawTrail.tsx`._ Paw-print cursor trail** (desktop, mouse only): canvas `fixed inset-0 z-[70] pointer-events-none`; every 46px of travel draw a toffee `#c2622b` paw at α .42, solid 600ms then fade 400ms, max 14 prints, rotated to heading. Spec §2.10. The custom paw cursor itself is already in CSS.
+- [x] **B4. _Shuffles after mount in `HeroLineup.tsx`._ Hero puppies order:** original shuffles on load (`src/components/home/HeroLineup.tsx` uses a fixed first six).
+- [x] **B5. _`ChatClip.tsx`, tap to play muted loop._ Home chat clip** is a poster with a play badge — make it a real `<video>` (videos are in `public/videos/`).
+- [x] **B6. _`WallPrints.tsx` reuses `PhotoViewer`._ Home photo-wall prints** link to `/happy-families`; original opens a lightbox. Reuse the viewer from `src/components/happy-families/PhotoViewer.tsx` (TODO in `HappyFamiliesTeaser.tsx`).
+- [x] **B7. _CSS `offset-path` loop in `how-it-works.css`._ How-it-works delivery plane** is static; original moves it along its route by script.
 
 ### C. Tiny details (only visible side by side)
 - [ ] C1. Sketch-card doodles/blobs on `/puppies` are generated per puppy (same style, not identical shapes) — `src/components/puppies/sketchShapes.ts`. Acceptable as is.
 - [ ] C2. 404 poster sits ~8px lower than the original (`src/styles/pages/not-found.css`).
 - [ ] C3. Gone-home stamp on puppy detail uses the shared `StatusTag` stamp, without the scroll-driven "thump".
-- [ ] C4. Home JSON-LD structured data not added.
-- [ ] C5. Lenis doesn't smooth-scroll same-page hash links (native jump instead).
+- [x] C4. _Added in `src/app/page.tsx`._ Home JSON-LD structured data not added.
+- [x] C5. _`SmoothScroll.tsx` handles same-page hash clicks._ Lenis doesn't smooth-scroll same-page hash links (native jump instead).
 
 ### D. Polish / housekeeping
 - [ ] D1. **Footer social links** (`src/data/siteConfig.ts` → `socials`) still point to the real business's Instagram/TikTok/Facebook. **Ask the user** before changing them (suggested: `#`).
-- [ ] D2. Compress media: `public/` is ~67 MB (36 MB family JPEGs, 12 MB puppy photos, 20 MB videos). Convert JPEGs to WebP/AVIF or resize; compress `public/videos/maltipoo-female-2-06.mp4` and `-07.mp4` first.
+- [~] D2. Compress media (JPEGs re-encoded in place with the same pixel size: `public/` 67 MB → 57 MB; **videos still uncompressed, no ffmpeg on this machine**): `public/` is ~67 MB (36 MB family JPEGs, 12 MB puppy photos, 20 MB videos). Convert JPEGs to WebP/AVIF or resize; compress `public/videos/maltipoo-female-2-06.mp4` and `-07.mp4` first.
 - [ ] D3. Lighthouse pass (performance, accessibility, SEO ≥ 90) and a real-phone test (touch swipe on galleries is untested).
 - [ ] D4. Update `PROCESS.md` (Steps 6–7, prompts, challenges) and record the Loom (outline in `PLAN.md` §6).
 

@@ -25,7 +25,23 @@ export function SmoothScroll() {
       frame = requestAnimationFrame(tick);
     });
 
+    // Same-page hash links glide instead of jumping (scroll-padding-top in the CSS is not used by Lenis).
+    const onClick = (event: MouseEvent) => {
+      const link = (event.target as Element | null)?.closest?.("a[href*='#']") as HTMLAnchorElement | null;
+      if (!link || event.defaultPrevented || event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+      const url = new URL(link.href, window.location.href);
+      if (url.pathname !== window.location.pathname || !url.hash || url.origin !== window.location.origin) return;
+      const target = document.getElementById(decodeURIComponent(url.hash.slice(1)));
+      if (!target) return;
+      event.preventDefault();
+      const header = document.getElementById("site-header")?.offsetHeight ?? 0;
+      lenis.scrollTo(target, { offset: -(header + 16) });
+      history.pushState(null, "", url.hash);
+    };
+    document.addEventListener("click", onClick);
+
     return () => {
+      document.removeEventListener("click", onClick);
       cancelAnimationFrame(frame);
       lenis.destroy();
     };

@@ -55,8 +55,8 @@ function FlightScene() {
         Dubai
       </text>
 
-      {/* The plane is drawn around its own centre, then moved and tilted to follow the end of the route. */}
-      <g transform="translate(514 100) rotate(22)">
+      {/* The plane is drawn around its own centre; CSS (offset-path) flies it along the route, nose first. */}
+      <g className="flight__plane">
         <g transform="translate(-126 -78)">
           <path d="M28 60 L8 26 L34 26 L60 54 Z" className="flight__wing" />
           <path d="M108 112 L142 156 L172 156 L158 112 Z" className="flight__wing flight__wing--far" />
