@@ -13,6 +13,8 @@ type CurtainState = "intro" | "idle" | "covering" | "covered" | "lifting";
 const INTRO_MS = 1040;
 const COVER_MS = 300;
 const LIFT_MS = 460;
+/** How long a client-side navigation may take before falling back to a full page load. */
+const FALLBACK_MS = 1500;
 
 // Links the curtain must never intercept.
 const IGNORED_PREFIXES = ["/admin", "/api", "/media", "/_next"];
@@ -45,6 +47,7 @@ export function PageTransition({ runner }: { runner: ReactNode }) {
   const pathname = usePathname();
   const [state, setState] = useState<CurtainState>("intro");
   const timer = useRef<number | undefined>(undefined);
+  const fallback = useRef<number | undefined>(undefined);
 
   const after = (ms: number, fn: () => void) => {
     window.clearTimeout(timer.current);
@@ -72,12 +75,23 @@ export function PageTransition({ runner }: { runner: ReactNode }) {
       after(COVER_MS, () => {
         setState("covered");
         router.push(path);
+        // Safety net: if the client-side navigation stalls or never starts, do a normal page load instead
+        // of leaving the visitor on the same page with the curtain down.
+        window.clearTimeout(fallback.current);
+        fallback.current = window.setTimeout(() => {
+          if (window.location.pathname + window.location.search !== path.split("#")[0]) window.location.assign(path);
+        }, FALLBACK_MS);
       });
     };
     // Capture phase so we run before Next's <Link> handler.
     document.addEventListener("click", onClick, true);
     return () => document.removeEventListener("click", onClick, true);
   }, [router]);
+
+  // Arriving at the new page cancels the safety net.
+  useEffect(() => {
+    window.clearTimeout(fallback.current);
+  }, [pathname]);
 
   // The new page has rendered: lift the blanket. (Only acts if this path change came from a covered
   // navigation; the state check is done in the timer so the effect itself never sets state.)
